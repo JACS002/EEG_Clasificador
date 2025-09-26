@@ -1,0 +1,2 @@
+file,n_epochs,sfreq,n_channels
+strict_subjects-epo.fif,7276,160.0,64

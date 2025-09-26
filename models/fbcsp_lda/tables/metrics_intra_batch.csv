@@ -1,0 +1,5 @@
+subject,acc_mean,f1_macro_mean,k,n_classes,crop,motor_only,zscore_epoch,n_csp,fb_bands
+S001,0.9107142857142858,0.9,10,4,"(0.5, 4.5)",False,False,6,11
+S002,0.8589285714285714,0.8400000000000001,10,4,"(0.5, 4.5)",False,False,6,11
+S003,0.44666666666666666,0.395,10,4,"(0.5, 4.5)",False,False,6,11
+S004,0.7,0.6666666666666666,10,4,"(0.5, 4.5)",False,False,6,11

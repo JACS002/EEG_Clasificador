@@ -1,0 +1,7 @@
+# Ignorar datasets pesados
+data/raw/
+data/processed/
+
+# ignorar checkpoints grandes
+*.fif
+*.edf

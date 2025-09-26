@@ -1,0 +1,20 @@
+[19:40:57] INFO: INTRA S002 | k=10 | n_epochs=84 | clases=['Both Feet', 'Both Fists', 'Left', 'Right'] | sfreq=160.0
+[19:40:57] INFO: Perillas: {'crop_window': (0.5, 4.5), 'motor_only': False, 'zscore_epoch': False, 'fb_bands': [(8, 10), (10, 12), (12, 14), (14, 16), (16, 18), (18, 20), (20, 22), (22, 24), (24, 26), (26, 28), (28, 30)], 'n_csp': 6}
+[19:41:23] INFO: [fold 1] acc=0.667 | f1m=0.658 | n_test=9
+[19:41:50] INFO: [fold 2] acc=0.889 | f1m=0.881 | n_test=9
+[19:42:19] INFO: [fold 3] acc=0.778 | f1m=0.750 | n_test=9
+[19:42:45] INFO: [fold 4] acc=0.889 | f1m=0.900 | n_test=9
+[19:43:11] INFO: [fold 5] acc=0.750 | f1m=0.750 | n_test=8
+[19:43:37] INFO: [fold 6] acc=0.875 | f1m=0.867 | n_test=8
+[19:44:03] INFO: [fold 7] acc=0.875 | f1m=0.867 | n_test=8
+[19:44:30] INFO: [fold 8] acc=0.625 | f1m=0.642 | n_test=8
+[19:44:57] INFO: [fold 9] acc=0.625 | f1m=0.575 | n_test=8
+[19:45:25] INFO: [fold 10] acc=0.875 | f1m=0.867 | n_test=8
+[19:45:25] INFO: [INTRA S002] ACC=0.785±0.106 | F1m=0.776±0.112
+[19:45:25] INFO: Matriz agregada:
+            Both Feet  Both Fists  Left  Right
+Both Feet          18           3     0      0
+Both Fists          2          15     3      1
+Left                1           2    14      4
+Right               0           0     2     19
+[19:45:25] INFO: Log → C:\Users\joelc\Desktop\eeg2\models\fbcsp_lda\logs\20250925-194057_intra_S002.txt
