@@ -1,0 +1,20 @@
+[21:25:42] INFO: INTRA S003 | k=10 | n_epochs=83 | clases=['Both Feet', 'Both Fists', 'Left', 'Right'] | sfreq=160.0
+[21:25:42] INFO: Perillas: {'crop_window': (0.5, 4.5), 'motor_only': True, 'zscore_epoch': False, 'fb_bands': [(8, 10), (10, 12), (12, 14), (14, 16), (16, 18), (18, 20), (20, 22), (22, 24), (24, 26), (26, 28), (28, 30)], 'n_csp': 6}
+[21:25:43] INFO: [fold 1] acc=0.556 | f1m=0.542 | n_test=9
+[21:25:44] INFO: [fold 2] acc=0.333 | f1m=0.243 | n_test=9
+[21:25:45] INFO: [fold 3] acc=0.667 | f1m=0.658 | n_test=9
+[21:25:46] INFO: [fold 4] acc=0.500 | f1m=0.367 | n_test=8
+[21:25:46] INFO: [fold 5] acc=0.750 | f1m=0.750 | n_test=8
+[21:25:47] INFO: [fold 6] acc=0.750 | f1m=0.733 | n_test=8
+[21:25:48] INFO: [fold 7] acc=0.375 | f1m=0.325 | n_test=8
+[21:25:49] INFO: [fold 8] acc=0.375 | f1m=0.350 | n_test=8
+[21:25:50] INFO: [fold 9] acc=0.500 | f1m=0.500 | n_test=8
+[21:25:51] INFO: [fold 10] acc=0.625 | f1m=0.625 | n_test=8
+[21:25:51] INFO: [INTRA S003] ACC=0.543±0.146 | F1m=0.509±0.172
+[21:25:51] INFO: Matriz agregada:
+            Both Feet  Both Fists  Left  Right
+Both Feet          12           8     0      0
+Both Fists         10          10     0      0
+Left                1           1    13      8
+Right               1           0     9     10
+[21:25:51] INFO: Log → C:\Users\joelc\Desktop\EEG_Clasificador\models\fbcsp_lda\logs\20250926-212542_intra_S003_motor_only.txt
