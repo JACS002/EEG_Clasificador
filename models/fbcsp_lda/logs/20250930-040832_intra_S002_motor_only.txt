@@ -1,0 +1,5 @@
+[04:08:32] INFO: INTRA S002 | k=15 | n_epochs=84 | clases=['Both Feet', 'Both Fists', 'Left', 'Right'] | sfreq=160.0
+[04:08:32] INFO: Perillas: {'crop_window': (0.5, 4.5), 'motor_only': False, 'zscore_epoch': True, 'fb_bands': [(8, 10), (10, 12), (12, 14), (14, 16), (16, 18), (18, 20), (20, 22), (22, 24), (24, 26), (26, 28), (28, 30)], 'n_csp': 4}
+[04:08:33] INFO: [fold 1] acc=0.833 | f1m=0.833 | n_test=6
+[04:08:35] INFO: [fold 2] acc=0.500 | f1m=0.375 | n_test=6
+[04:08:36] INFO: [fold 3] acc=0.833 | f1m=0.867 | n_test=6

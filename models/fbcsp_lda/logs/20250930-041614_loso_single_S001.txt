@@ -1,0 +1,3 @@
+[04:16:14] INFO: Perillas: {'crop_window': (0.5, 4.5), 'motor_only': False, 'zscore_epoch': False, 'fb_bands': '[(8, 10), (10, 12), (12, 14), (14, 16), (16, 18), (18, 20), (20, 22), (22, 24), (24, 26), (26, 28), (28, 30)]', 'n_csp': 6, 'calib_k': 5}
+[04:16:14] INFO: (DROP-only) DROP-only: 2 en DROP; válidos=101/103 | train_ids=['S002', 'S003', 'S004', 'S005', 'S006', 'S007', 'S008', 'S009', 'S010', 'S011'] ...
+[04:19:21] INFO: [LOSO SINGLE] test=S001 | acc=0.486 | f1m=0.437 | n_test=70

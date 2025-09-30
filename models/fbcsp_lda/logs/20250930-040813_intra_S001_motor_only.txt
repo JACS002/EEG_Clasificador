@@ -1,0 +1,25 @@
+[04:08:13] INFO: INTRA S001 | k=15 | n_epochs=90 | clases=['Both Feet', 'Both Fists', 'Left', 'Right'] | sfreq=160.0
+[04:08:13] INFO: Perillas: {'crop_window': (0.5, 4.5), 'motor_only': False, 'zscore_epoch': True, 'fb_bands': [(8, 10), (10, 12), (12, 14), (14, 16), (16, 18), (18, 20), (20, 22), (22, 24), (24, 26), (26, 28), (28, 30)], 'n_csp': 4}
+[04:08:14] INFO: [fold 1] acc=0.333 | f1m=0.292 | n_test=6
+[04:08:15] INFO: [fold 2] acc=0.667 | f1m=0.583 | n_test=6
+[04:08:17] INFO: [fold 3] acc=0.333 | f1m=0.267 | n_test=6
+[04:08:18] INFO: [fold 4] acc=0.833 | f1m=0.700 | n_test=6
+[04:08:19] INFO: [fold 5] acc=0.667 | f1m=0.583 | n_test=6
+[04:08:21] INFO: [fold 6] acc=0.500 | f1m=0.375 | n_test=6
+[04:08:22] INFO: [fold 7] acc=0.667 | f1m=0.542 | n_test=6
+[04:08:23] INFO: [fold 8] acc=0.833 | f1m=0.700 | n_test=6
+[04:08:24] INFO: [fold 9] acc=0.667 | f1m=0.625 | n_test=6
+[04:08:26] INFO: [fold 10] acc=0.667 | f1m=0.625 | n_test=6
+[04:08:27] INFO: [fold 11] acc=0.667 | f1m=0.625 | n_test=6
+[04:08:28] INFO: [fold 12] acc=0.667 | f1m=0.708 | n_test=6
+[04:08:30] INFO: [fold 13] acc=0.333 | f1m=0.350 | n_test=6
+[04:08:31] INFO: [fold 14] acc=0.667 | f1m=0.750 | n_test=6
+[04:08:32] INFO: [fold 15] acc=0.333 | f1m=0.375 | n_test=6
+[04:08:32] INFO: [INTRA S001] ACC=0.589±0.171 | F1m=0.540±0.158
+[04:08:32] INFO: Matriz agregada:
+            Both Feet  Both Fists  Left  Right
+Both Feet          21           1     1      1
+Both Fists          0           9     6      6
+Left                0           3    13      7
+Right               0           7     5     10
+[04:08:32] INFO: Log → /root/Proyecto/EEG_Clasificador/models/fbcsp_lda/logs/20250930-040813_intra_S001_motor_only.txt
