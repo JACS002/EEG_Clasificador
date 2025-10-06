@@ -1,0 +1,5 @@
+INTER-SUJETO (FBCSP) — TEST fijo
+Generado: 2025-10-06 06:27:59
+
+                  mode  acc_val   f1_val  acc_test  f1_test  n_train  n_val  n_test       crop  n_csp  fb_bands  refit_on_trainval_for_test  calibrate_k_per_class
+inter_fixedsplit_fbcsp 0.316752 0.316223  0.416875 0.412953       63     16      24 (0.5, 3.0)      4        11                       False                     10

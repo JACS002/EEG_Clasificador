@@ -1,0 +1,2 @@
+mode,model,metric,cov_estimator,acc_val,f1_val,acc_test,f1_test,n_train,n_val,n_test,crop,fb_bands
+inter_fixedsplit_riem,fgmdm,riemann,oas,0.3372348207754206,0.33740945667478917,0.37493881546744984,0.36489922609818737,63,16,24,"(0.5, 4.5)",11

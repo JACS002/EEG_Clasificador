@@ -1,0 +1,20 @@
+[23:27:43] INFO: [RUN loso_all_20251005-232743] Inicio de ejecución LOSO
+[23:27:43] INFO: Perillas: {'crop_window': (0.5, 4.5), 'motor_only': False, 'zscore_epoch': False, 'fb_bands': '[(8, 10), (10, 12), (12, 14), (14, 16), (16, 18), (18, 20), (20, 22), (22, 24), (24, 26), (26, 28), (28, 30)]', 'n_csp': 4}
+[23:27:43] INFO: (strict=OFF) tests → ['S001', 'S002', 'S003', 'S004', 'S005', 'S006', 'S007', 'S008', 'S009', 'S010'] ...
+[23:29:15] INFO: [LOSO] test=S001 | acc=0.533 | f1m=0.485 | n_test=90
+[23:30:48] INFO: [LOSO] test=S002 | acc=0.548 | f1m=0.544 | n_test=84
+[23:32:19] INFO: [LOSO] test=S003 | acc=0.233 | f1m=0.228 | n_test=90
+[23:33:51] INFO: [LOSO] test=S004 | acc=0.393 | f1m=0.359 | n_test=84
+[23:35:26] INFO: [LOSO] test=S005 | acc=0.253 | f1m=0.164 | n_test=83
+[23:36:59] INFO: [LOSO] test=S006 | acc=0.250 | f1m=0.199 | n_test=84
+[23:38:31] INFO: [LOSO] test=S007 | acc=0.678 | f1m=0.659 | n_test=90
+[23:40:04] INFO: [LOSO] test=S008 | acc=0.488 | f1m=0.493 | n_test=84
+[23:41:36] INFO: [LOSO] test=S009 | acc=0.238 | f1m=0.201 | n_test=84
+[23:43:08] INFO: [LOSO] test=S010 | acc=0.512 | f1m=0.480 | n_test=84
+[23:44:40] INFO: [LOSO] test=S011 | acc=0.310 | f1m=0.270 | n_test=84
+[23:46:13] INFO: [LOSO] test=S012 | acc=0.512 | f1m=0.510 | n_test=84
+[23:47:45] INFO: [LOSO] test=S013 | acc=0.324 | f1m=0.259 | n_test=74
+[23:49:18] INFO: [LOSO] test=S014 | acc=0.333 | f1m=0.294 | n_test=84
+[23:50:50] INFO: [LOSO] test=S015 | acc=0.512 | f1m=0.486 | n_test=84
+[23:52:23] INFO: [LOSO] test=S016 | acc=0.321 | f1m=0.281 | n_test=84
+[23:53:56] INFO: [LOSO] test=S017 | acc=0.393 | f1m=0.334 | n_test=84
