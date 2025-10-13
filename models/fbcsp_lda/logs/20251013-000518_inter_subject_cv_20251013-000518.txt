@@ -1,0 +1,1 @@
+[00:05:18] INFO: [RUN inter_subject_cv_20251013-000518] Inter-subject CV usando 7 folds

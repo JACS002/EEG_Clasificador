@@ -1,2 +1,0 @@
-mode,acc_val,f1_val,acc_test,f1_test,n_train,n_val,n_test,crop,n_csp,fb_bands
-inter_fixedsplit_fbcsp,0.32991953182150696,0.32958049746139484,0.4067547723935389,0.4027925257477548,63,16,24,"(0.5, 4.5)",4,11

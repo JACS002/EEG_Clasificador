@@ -1,0 +1,48 @@
+[00:04:37] INFO: [RUN intra_all_20251007-000437] Inicio de ejecución INTRA
+[00:04:37] INFO: Parámetros: k=5, crop_window=(0.5, 4.5), motor_only=True, zscore_epoch=False, n_csp=4, fb_bands=6
+[00:04:37] INFO: Sujetos detectados: ['S001', 'S002', 'S003', 'S004', 'S005', 'S006', 'S007', 'S008', 'S009', 'S010', 'S011', 'S012', 'S013', 'S014', 'S015', 'S016', 'S017', 'S018', 'S019', 'S020', 'S021', 'S022', 'S023', 'S024', 'S025', 'S026', 'S027', 'S028', 'S029', 'S030', 'S031', 'S032', 'S033', 'S034', 'S035', 'S036', 'S037', 'S039', 'S040', 'S041', 'S042', 'S043', 'S044', 'S045', 'S046', 'S047', 'S048', 'S049', 'S050', 'S051', 'S052', 'S053', 'S054', 'S055', 'S056', 'S057', 'S058', 'S059', 'S060', 'S061', 'S062', 'S063', 'S064', 'S065', 'S066', 'S067', 'S068', 'S069', 'S070', 'S071', 'S072', 'S073', 'S074', 'S075', 'S076', 'S077', 'S078', 'S079', 'S080', 'S081', 'S082', 'S083', 'S084', 'S085', 'S086', 'S087', 'S090', 'S091', 'S093', 'S094', 'S095', 'S096', 'S097', 'S098', 'S099', 'S101', 'S102', 'S103', 'S105', 'S106', 'S107', 'S108', 'S109']
+[00:04:37] INFO: == S001 | n_epochs=90 | clases=['both_feet', 'both_hands', 'left', 'right'] | sfreq=160.0
+[00:04:37] INFO: [S001 | fold 1] acc=0.611 | f1m=0.600
+[00:04:38] INFO: [S001 | fold 2] acc=0.556 | f1m=0.535
+[00:04:39] INFO: [S001 | fold 3] acc=0.611 | f1m=0.588
+[00:04:39] INFO: [S001 | fold 4] acc=0.500 | f1m=0.479
+[00:04:40] INFO: [S001 | fold 5] acc=0.500 | f1m=0.450
+[00:04:40] INFO: [S001] ACC=0.556±0.050 | F1m=0.530±0.059
+[00:04:40] INFO: == S002 | n_epochs=84 | clases=['both_feet', 'both_hands', 'left', 'right'] | sfreq=160.0
+[00:04:40] INFO: [S002 | fold 1] acc=0.824 | f1m=0.804
+[00:04:41] INFO: [S002 | fold 2] acc=0.529 | f1m=0.515
+[00:04:41] INFO: [S002 | fold 3] acc=0.765 | f1m=0.765
+[00:04:41] INFO: [S002 | fold 4] acc=0.588 | f1m=0.585
+[00:04:42] INFO: [S002 | fold 5] acc=0.688 | f1m=0.618
+[00:04:42] INFO: [S002] ACC=0.679±0.109 | F1m=0.657±0.110
+[00:04:42] INFO: == S003 | n_epochs=90 | clases=['both_feet', 'both_hands', 'left', 'right'] | sfreq=160.0
+[00:04:42] INFO: [S003 | fold 1] acc=0.500 | f1m=0.497
+[00:04:43] INFO: [S003 | fold 2] acc=0.556 | f1m=0.473
+[00:04:43] INFO: [S003 | fold 3] acc=0.611 | f1m=0.610
+[00:04:44] INFO: [S003 | fold 4] acc=0.556 | f1m=0.562
+[00:04:45] INFO: [S003 | fold 5] acc=0.444 | f1m=0.446
+[00:04:45] INFO: [S003] ACC=0.533±0.057 | F1m=0.518±0.060
+[00:04:45] INFO: == S004 | n_epochs=84 | clases=['both_feet', 'both_hands', 'left', 'right'] | sfreq=160.0
+[00:04:45] INFO: [S004 | fold 1] acc=0.588 | f1m=0.568
+[00:04:45] INFO: [S004 | fold 2] acc=0.471 | f1m=0.488
+[00:04:46] INFO: [S004 | fold 3] acc=0.706 | f1m=0.713
+[00:04:46] INFO: [S004 | fold 4] acc=0.529 | f1m=0.468
+[00:04:47] INFO: [S004 | fold 5] acc=0.625 | f1m=0.635
+[00:04:47] INFO: [S004] ACC=0.584±0.080 | F1m=0.574±0.091
+[00:04:47] INFO: == S005 | n_epochs=84 | clases=['both_feet', 'both_hands', 'left', 'right'] | sfreq=160.0
+[00:04:47] INFO: [S005 | fold 1] acc=0.412 | f1m=0.361
+[00:04:48] INFO: [S005 | fold 2] acc=0.176 | f1m=0.163
+[00:04:48] INFO: [S005 | fold 3] acc=0.294 | f1m=0.296
+[00:04:49] INFO: [S005 | fold 4] acc=0.176 | f1m=0.167
+[00:04:49] INFO: [S005 | fold 5] acc=0.312 | f1m=0.308
+[00:04:49] INFO: [S005] ACC=0.274±0.089 | F1m=0.259±0.080
+[00:04:49] INFO: == S006 | n_epochs=84 | clases=['both_feet', 'both_hands', 'left', 'right'] | sfreq=160.0
+[00:04:50] INFO: [S006 | fold 1] acc=0.471 | f1m=0.492
+[00:04:50] INFO: [S006 | fold 2] acc=0.235 | f1m=0.221
+[00:04:51] INFO: [S006 | fold 3] acc=0.529 | f1m=0.542
+[00:04:51] INFO: [S006 | fold 4] acc=0.588 | f1m=0.583
+[00:04:52] INFO: [S006 | fold 5] acc=0.438 | f1m=0.404
+[00:04:52] INFO: [S006] ACC=0.452±0.120 | F1m=0.448±0.128
+[00:04:52] INFO: == S007 | n_epochs=90 | clases=['both_feet', 'both_hands', 'left', 'right'] | sfreq=160.0
+[00:04:52] INFO: [S007 | fold 1] acc=0.944 | f1m=0.944
+[00:04:53] INFO: [S007 | fold 2] acc=0.944 | f1m=0.942

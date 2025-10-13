@@ -1,5 +1,0 @@
-INTER-SUJETO (Riemann) — TEST fijo
-Generado: 2025-10-06 03:36:56
-
-                 mode model  metric cov_estimator  acc_val   f1_val  acc_test  f1_test  n_train  n_val  n_test       crop  fb_bands
-inter_fixedsplit_riem fgmdm riemann           oas 0.337235 0.337409  0.374939 0.364899       63     16      24 (0.5, 4.5)        11

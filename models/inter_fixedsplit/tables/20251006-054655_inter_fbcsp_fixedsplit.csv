@@ -1,2 +1,0 @@
-mode,acc_val,f1_val,acc_test,f1_test,n_train,n_val,n_test,crop,n_csp,fb_bands,refit_on_trainval_for_test,calibrate_k_per_class
-inter_fixedsplit_fbcsp,0.31163130943672274,0.3113959131028723,0.4238642036944583,0.42026016182868253,63,16,24,"(0.5, 3.5)",4,11,False,10
