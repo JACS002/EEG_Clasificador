@@ -1,0 +1,138 @@
+[02:36:49] INFO: [RUN inter_subject_cv_json_20251014-023649] Inter-Subject CV con VALID por sujetos y CALIBRACIÓN PER-SUBJECT (k=5 por clase)
+[02:36:49] INFO: Perillas: {'crop_window': (0.5, 3.5), 'motor_only': True, 'zscore_epoch': False, 'fb_bands': '[(8, 10), (10, 12), (12, 14), (14, 16), (16, 18), (18, 20), (20, 22), (22, 24), (24, 26), (26, 28), (28, 30)]', 'n_csp': 4} | val_ratio_subjects=0.16
+[02:36:49] INFO: Folds cargadas: 5 | sujetos en JSON: 103
+[02:36:49] INFO: [Fold 1] train(82): ['S001', 'S002', 'S004', 'S005', 'S006', 'S007', 'S009', 'S010', 'S011', 'S012', 'S014', 'S015', 'S016', 'S017', 'S019', 'S020', 'S021', 'S022', 'S024', 'S025', 'S026', 'S027', 'S029', 'S030', 'S031', 'S032', 'S034', 'S035', 'S036', 'S037', 'S040', 'S041', 'S042', 'S043', 'S045', 'S046', 'S047', 'S048', 'S050', 'S051', 'S052', 'S053', 'S055', 'S056', 'S057', 'S058', 'S060', 'S061', 'S062', 'S063', 'S065', 'S066', 'S067', 'S068', 'S070', 'S071', 'S072', 'S073', 'S075', 'S076', 'S077', 'S078', 'S080', 'S081', 'S082', 'S083', 'S085', 'S086', 'S087', 'S090', 'S093', 'S094', 'S095', 'S096', 'S098', 'S099', 'S101', 'S102', 'S105', 'S106', 'S107', 'S108']
+[02:36:49] INFO: [Fold 1] test (21): ['S003', 'S008', 'S013', 'S018', 'S023', 'S028', 'S033', 'S039', 'S044', 'S049', 'S054', 'S059', 'S064', 'S069', 'S074', 'S079', 'S084', 'S091', 'S097', 'S103', 'S109']
+[02:36:49] INFO: [Fold 1] split interno → train_sids=69, val_sids=13
+[02:39:10] INFO: [Fold 1] VAL   acc=0.4304 | f1m=0.4289 | n_val=1120
+[02:40:09] INFO: [Fold 1] TEST (per-subject k-shots) S003 → acc=0.2000, n=70
+[02:41:12] INFO: [Fold 1] TEST (per-subject k-shots) S008 → acc=0.4531, n=64
+[02:42:12] INFO: [Fold 1] TEST (per-subject k-shots) S013 → acc=0.2903, n=62
+[02:43:43] INFO: [Fold 1] TEST (per-subject k-shots) S018 → acc=0.1875, n=64
+[02:44:49] INFO: [Fold 1] TEST (per-subject k-shots) S023 → acc=0.3281, n=64
+[02:45:47] INFO: [Fold 1] TEST (per-subject k-shots) S028 → acc=0.2500, n=64
+[02:46:49] INFO: [Fold 1] TEST (per-subject k-shots) S033 → acc=0.4688, n=64
+[02:47:46] INFO: [Fold 1] TEST (per-subject k-shots) S039 → acc=0.2500, n=64
+[02:48:49] INFO: [Fold 1] TEST (per-subject k-shots) S044 → acc=0.4286, n=63
+[02:49:47] INFO: [Fold 1] TEST (per-subject k-shots) S049 → acc=0.3438, n=64
+[02:50:48] INFO: [Fold 1] TEST (per-subject k-shots) S054 → acc=0.2969, n=64
+[02:51:46] INFO: [Fold 1] TEST (per-subject k-shots) S059 → acc=0.3125, n=64
+[02:52:48] INFO: [Fold 1] TEST (per-subject k-shots) S064 → acc=0.3881, n=67
+[02:53:47] INFO: [Fold 1] TEST (per-subject k-shots) S069 → acc=0.4531, n=64
+[02:54:47] INFO: [Fold 1] TEST (per-subject k-shots) S074 → acc=0.2923, n=65
+[02:55:46] INFO: [Fold 1] TEST (per-subject k-shots) S079 → acc=0.2500, n=68
+[02:56:46] INFO: [Fold 1] TEST (per-subject k-shots) S084 → acc=0.3016, n=63
+[02:57:46] INFO: [Fold 1] TEST (per-subject k-shots) S091 → acc=0.3750, n=64
+[02:58:46] INFO: [Fold 1] TEST (per-subject k-shots) S097 → acc=0.2188, n=64
+[02:59:47] INFO: [Fold 1] TEST (per-subject k-shots) S103 → acc=0.2714, n=70
+[03:00:45] INFO: [Fold 1] TEST (per-subject k-shots) S109 → acc=0.1818, n=22
+[03:00:45] INFO: [Fold 1] TEST  acc=0.3149 | f1m=0.3141 | n_test=1318
+[03:00:45] INFO: [Fold 2] train(82): ['S001', 'S003', 'S004', 'S005', 'S006', 'S008', 'S009', 'S010', 'S011', 'S013', 'S014', 'S015', 'S016', 'S018', 'S019', 'S020', 'S021', 'S023', 'S024', 'S025', 'S026', 'S028', 'S029', 'S030', 'S031', 'S033', 'S034', 'S035', 'S036', 'S039', 'S040', 'S041', 'S042', 'S044', 'S045', 'S046', 'S047', 'S049', 'S050', 'S051', 'S052', 'S054', 'S055', 'S056', 'S057', 'S059', 'S060', 'S061', 'S062', 'S064', 'S065', 'S066', 'S067', 'S069', 'S070', 'S071', 'S072', 'S074', 'S075', 'S076', 'S077', 'S079', 'S080', 'S081', 'S082', 'S084', 'S085', 'S086', 'S087', 'S091', 'S093', 'S094', 'S095', 'S097', 'S098', 'S099', 'S101', 'S103', 'S105', 'S106', 'S107', 'S109']
+[03:00:45] INFO: [Fold 2] test (21): ['S002', 'S007', 'S012', 'S017', 'S022', 'S027', 'S032', 'S037', 'S043', 'S048', 'S053', 'S058', 'S063', 'S068', 'S073', 'S078', 'S083', 'S090', 'S096', 'S102', 'S108']
+[03:00:45] INFO: [Fold 2] split interno → train_sids=69, val_sids=13
+[03:03:08] INFO: [Fold 2] VAL   acc=0.3721 | f1m=0.3702 | n_val=1067
+[03:04:07] INFO: [Fold 2] TEST (per-subject k-shots) S002 → acc=0.6250, n=64
+[03:05:07] INFO: [Fold 2] TEST (per-subject k-shots) S007 → acc=0.5714, n=70
+[03:06:06] INFO: [Fold 2] TEST (per-subject k-shots) S012 → acc=0.4844, n=64
+[03:07:05] INFO: [Fold 2] TEST (per-subject k-shots) S017 → acc=0.3594, n=64
+[03:08:04] INFO: [Fold 2] TEST (per-subject k-shots) S022 → acc=0.2857, n=70
+[03:09:02] INFO: [Fold 2] TEST (per-subject k-shots) S027 → acc=0.3906, n=64
+[03:10:02] INFO: [Fold 2] TEST (per-subject k-shots) S032 → acc=0.3571, n=70
+[03:10:58] INFO: [Fold 2] TEST (per-subject k-shots) S037 → acc=0.2462, n=65
+[03:12:12] INFO: [Fold 2] TEST (per-subject k-shots) S043 → acc=0.4688, n=64
+[03:13:41] INFO: [Fold 2] TEST (per-subject k-shots) S048 → acc=0.5156, n=64
+[03:15:06] INFO: [Fold 2] TEST (per-subject k-shots) S053 → acc=0.1562, n=64
+[03:16:37] INFO: [Fold 2] TEST (per-subject k-shots) S058 → acc=0.3906, n=64
+[03:18:04] INFO: [Fold 2] TEST (per-subject k-shots) S063 → acc=0.2381, n=63
+[03:19:29] INFO: [Fold 2] TEST (per-subject k-shots) S068 → acc=0.3281, n=64
+[03:20:46] INFO: [Fold 2] TEST (per-subject k-shots) S073 → acc=0.4375, n=64
+[03:21:44] INFO: [Fold 2] TEST (per-subject k-shots) S078 → acc=0.2656, n=64
+[03:22:43] INFO: [Fold 2] TEST (per-subject k-shots) S083 → acc=0.3143, n=70
+[03:23:45] INFO: [Fold 2] TEST (per-subject k-shots) S090 → acc=0.3125, n=64
+[03:24:43] INFO: [Fold 2] TEST (per-subject k-shots) S096 → acc=0.3676, n=68
+[03:25:44] INFO: [Fold 2] TEST (per-subject k-shots) S102 → acc=0.5846, n=65
+[03:26:43] INFO: [Fold 2] TEST (per-subject k-shots) S108 → acc=0.3906, n=64
+[03:26:43] INFO: [Fold 2] TEST  acc=0.3853 | f1m=0.3852 | n_test=1373
+[03:26:43] INFO: [Fold 3] train(82): ['S002', 'S003', 'S004', 'S005', 'S007', 'S008', 'S009', 'S010', 'S012', 'S013', 'S014', 'S015', 'S017', 'S018', 'S019', 'S020', 'S022', 'S023', 'S024', 'S025', 'S027', 'S028', 'S029', 'S030', 'S032', 'S033', 'S034', 'S035', 'S037', 'S039', 'S040', 'S041', 'S043', 'S044', 'S045', 'S046', 'S048', 'S049', 'S050', 'S051', 'S053', 'S054', 'S055', 'S056', 'S058', 'S059', 'S060', 'S061', 'S063', 'S064', 'S065', 'S066', 'S068', 'S069', 'S070', 'S071', 'S073', 'S074', 'S075', 'S076', 'S078', 'S079', 'S080', 'S081', 'S083', 'S084', 'S085', 'S086', 'S090', 'S091', 'S093', 'S094', 'S096', 'S097', 'S098', 'S099', 'S102', 'S103', 'S105', 'S106', 'S108', 'S109']
+[03:26:43] INFO: [Fold 3] test (21): ['S001', 'S006', 'S011', 'S016', 'S021', 'S026', 'S031', 'S036', 'S042', 'S047', 'S052', 'S057', 'S062', 'S067', 'S072', 'S077', 'S082', 'S087', 'S095', 'S101', 'S107']
+[03:26:43] INFO: [Fold 3] split interno → train_sids=69, val_sids=13
+[03:29:05] INFO: [Fold 3] VAL   acc=0.3375 | f1m=0.3358 | n_val=1111
+[03:30:05] INFO: [Fold 3] TEST (per-subject k-shots) S001 → acc=0.5429, n=70
+[03:31:01] INFO: [Fold 3] TEST (per-subject k-shots) S006 → acc=0.3281, n=64
+[03:31:57] INFO: [Fold 3] TEST (per-subject k-shots) S011 → acc=0.2188, n=64
+[03:32:53] INFO: [Fold 3] TEST (per-subject k-shots) S016 → acc=0.3750, n=64
+[03:33:52] INFO: [Fold 3] TEST (per-subject k-shots) S021 → acc=0.3000, n=70
+[03:34:50] INFO: [Fold 3] TEST (per-subject k-shots) S026 → acc=0.3438, n=64
+[03:35:52] INFO: [Fold 3] TEST (per-subject k-shots) S031 → acc=0.2812, n=64
+[03:36:50] INFO: [Fold 3] TEST (per-subject k-shots) S036 → acc=0.3906, n=64
+[03:37:50] INFO: [Fold 3] TEST (per-subject k-shots) S042 → acc=0.4531, n=64
+[03:38:50] INFO: [Fold 3] TEST (per-subject k-shots) S047 → acc=0.3438, n=64
+[03:39:48] INFO: [Fold 3] TEST (per-subject k-shots) S052 → acc=0.5312, n=64
+[03:40:48] INFO: [Fold 3] TEST (per-subject k-shots) S057 → acc=0.3571, n=70
+[03:41:46] INFO: [Fold 3] TEST (per-subject k-shots) S062 → acc=0.7188, n=64
+[03:42:49] INFO: [Fold 3] TEST (per-subject k-shots) S067 → acc=0.2812, n=64
+[03:43:48] INFO: [Fold 3] TEST (per-subject k-shots) S072 → acc=0.7231, n=65
+[03:44:52] INFO: [Fold 3] TEST (per-subject k-shots) S077 → acc=0.2656, n=64
+[03:45:48] INFO: [Fold 3] TEST (per-subject k-shots) S082 → acc=0.3438, n=64
+[03:46:51] INFO: [Fold 3] TEST (per-subject k-shots) S087 → acc=0.3750, n=64
+[03:47:46] INFO: [Fold 3] TEST (per-subject k-shots) S095 → acc=0.3857, n=70
+[03:48:49] INFO: [Fold 3] TEST (per-subject k-shots) S101 → acc=0.2857, n=70
+[03:49:46] INFO: [Fold 3] TEST (per-subject k-shots) S107 → acc=0.2143, n=70
+[03:49:46] INFO: [Fold 3] TEST  acc=0.3831 | f1m=0.3837 | n_test=1381
+[03:49:46] INFO: [Fold 4] train(83): ['S001', 'S002', 'S003', 'S004', 'S006', 'S007', 'S008', 'S009', 'S011', 'S012', 'S013', 'S014', 'S016', 'S017', 'S018', 'S019', 'S021', 'S022', 'S023', 'S024', 'S026', 'S027', 'S028', 'S029', 'S031', 'S032', 'S033', 'S034', 'S036', 'S037', 'S039', 'S040', 'S042', 'S043', 'S044', 'S045', 'S047', 'S048', 'S049', 'S050', 'S052', 'S053', 'S054', 'S055', 'S057', 'S058', 'S059', 'S060', 'S062', 'S063', 'S064', 'S065', 'S067', 'S068', 'S069', 'S070', 'S072', 'S073', 'S074', 'S075', 'S077', 'S078', 'S079', 'S080', 'S082', 'S083', 'S084', 'S085', 'S087', 'S090', 'S091', 'S093', 'S095', 'S096', 'S097', 'S098', 'S101', 'S102', 'S103', 'S105', 'S107', 'S108', 'S109']
+[03:49:46] INFO: [Fold 4] test (20): ['S005', 'S010', 'S015', 'S020', 'S025', 'S030', 'S035', 'S041', 'S046', 'S051', 'S056', 'S061', 'S066', 'S071', 'S076', 'S081', 'S086', 'S094', 'S099', 'S106']
+[03:49:46] INFO: [Fold 4] split interno → train_sids=70, val_sids=13
+[03:52:09] INFO: [Fold 4] VAL   acc=0.3243 | f1m=0.3236 | n_val=1101
+[03:53:10] INFO: [Fold 4] TEST (per-subject k-shots) S005 → acc=0.2188, n=64
+[03:54:06] INFO: [Fold 4] TEST (per-subject k-shots) S010 → acc=0.5156, n=64
+[03:55:04] INFO: [Fold 4] TEST (per-subject k-shots) S015 → acc=0.6250, n=64
+[03:56:01] INFO: [Fold 4] TEST (per-subject k-shots) S020 → acc=0.3125, n=64
+[03:57:02] INFO: [Fold 4] TEST (per-subject k-shots) S025 → acc=0.4375, n=64
+[03:58:01] INFO: [Fold 4] TEST (per-subject k-shots) S030 → acc=0.4286, n=70
+[03:58:58] INFO: [Fold 4] TEST (per-subject k-shots) S035 → acc=0.6000, n=70
+[03:59:56] INFO: [Fold 4] TEST (per-subject k-shots) S041 → acc=0.2206, n=68
+[04:00:56] INFO: [Fold 4] TEST (per-subject k-shots) S046 → acc=0.3714, n=70
+[04:01:58] INFO: [Fold 4] TEST (per-subject k-shots) S051 → acc=0.2429, n=70
+[04:02:55] INFO: [Fold 4] TEST (per-subject k-shots) S056 → acc=0.3438, n=64
+[04:03:56] INFO: [Fold 4] TEST (per-subject k-shots) S061 → acc=0.4571, n=70
+[04:04:52] INFO: [Fold 4] TEST (per-subject k-shots) S066 → acc=0.3143, n=70
+[04:05:53] INFO: [Fold 4] TEST (per-subject k-shots) S071 → acc=0.6286, n=70
+[04:06:50] INFO: [Fold 4] TEST (per-subject k-shots) S076 → acc=0.3125, n=64
+[04:07:52] INFO: [Fold 4] TEST (per-subject k-shots) S081 → acc=0.3281, n=64
+[04:08:49] INFO: [Fold 4] TEST (per-subject k-shots) S086 → acc=0.4203, n=69
+[04:09:51] INFO: [Fold 4] TEST (per-subject k-shots) S094 → acc=0.4062, n=64
+[04:11:00] INFO: [Fold 4] TEST (per-subject k-shots) S099 → acc=0.2500, n=64
+[04:12:09] INFO: [Fold 4] TEST (per-subject k-shots) S106 → acc=0.4000, n=70
+[04:12:09] INFO: [Fold 4] TEST  acc=0.3927 | f1m=0.3947 | n_test=1337
+[04:12:09] INFO: [Fold 5] train(83): ['S001', 'S002', 'S003', 'S005', 'S006', 'S007', 'S008', 'S010', 'S011', 'S012', 'S013', 'S015', 'S016', 'S017', 'S018', 'S020', 'S021', 'S022', 'S023', 'S025', 'S026', 'S027', 'S028', 'S030', 'S031', 'S032', 'S033', 'S035', 'S036', 'S037', 'S039', 'S041', 'S042', 'S043', 'S044', 'S046', 'S047', 'S048', 'S049', 'S051', 'S052', 'S053', 'S054', 'S056', 'S057', 'S058', 'S059', 'S061', 'S062', 'S063', 'S064', 'S066', 'S067', 'S068', 'S069', 'S071', 'S072', 'S073', 'S074', 'S076', 'S077', 'S078', 'S079', 'S081', 'S082', 'S083', 'S084', 'S086', 'S087', 'S090', 'S091', 'S094', 'S095', 'S096', 'S097', 'S099', 'S101', 'S102', 'S103', 'S106', 'S107', 'S108', 'S109']
+[04:12:09] INFO: [Fold 5] test (20): ['S004', 'S009', 'S014', 'S019', 'S024', 'S029', 'S034', 'S040', 'S045', 'S050', 'S055', 'S060', 'S065', 'S070', 'S075', 'S080', 'S085', 'S093', 'S098', 'S105']
+[04:12:09] INFO: [Fold 5] split interno → train_sids=70, val_sids=13
+[04:14:36] INFO: [Fold 5] VAL   acc=0.3119 | f1m=0.3103 | n_val=1106
+[04:15:35] INFO: [Fold 5] TEST (per-subject k-shots) S004 → acc=0.3438, n=64
+[04:16:36] INFO: [Fold 5] TEST (per-subject k-shots) S009 → acc=0.2969, n=64
+[04:17:35] INFO: [Fold 5] TEST (per-subject k-shots) S014 → acc=0.2656, n=64
+[04:18:33] INFO: [Fold 5] TEST (per-subject k-shots) S019 → acc=0.4375, n=64
+[04:19:40] INFO: [Fold 5] TEST (per-subject k-shots) S024 → acc=0.3400, n=50
+[04:20:37] INFO: [Fold 5] TEST (per-subject k-shots) S029 → acc=0.5143, n=70
+[04:21:35] INFO: [Fold 5] TEST (per-subject k-shots) S034 → acc=0.5231, n=65
+[04:22:40] INFO: [Fold 5] TEST (per-subject k-shots) S040 → acc=0.1562, n=64
+[04:23:38] INFO: [Fold 5] TEST (per-subject k-shots) S045 → acc=0.4375, n=64
+[04:24:42] INFO: [Fold 5] TEST (per-subject k-shots) S050 → acc=0.2969, n=64
+[04:25:42] INFO: [Fold 5] TEST (per-subject k-shots) S055 → acc=0.5625, n=64
+[04:26:44] INFO: [Fold 5] TEST (per-subject k-shots) S060 → acc=0.5938, n=64
+[04:27:44] INFO: [Fold 5] TEST (per-subject k-shots) S065 → acc=0.3286, n=70
+[04:28:47] INFO: [Fold 5] TEST (per-subject k-shots) S070 → acc=0.3594, n=64
+[04:29:49] INFO: [Fold 5] TEST (per-subject k-shots) S075 → acc=0.5312, n=64
+[04:30:51] INFO: [Fold 5] TEST (per-subject k-shots) S080 → acc=0.3125, n=64
+[04:31:58] INFO: [Fold 5] TEST (per-subject k-shots) S085 → acc=0.3906, n=64
+[04:33:00] INFO: [Fold 5] TEST (per-subject k-shots) S093 → acc=0.6719, n=64
+[04:34:03] INFO: [Fold 5] TEST (per-subject k-shots) S098 → acc=0.2969, n=64
+[04:35:05] INFO: [Fold 5] TEST (per-subject k-shots) S105 → acc=0.4375, n=64
+[04:35:05] INFO: [Fold 5] TEST  acc=0.4058 | f1m=0.3982 | n_test=1279
+[04:35:05] INFO: CSV consolidado → /root/Proyecto/EEG_Clasificador/models/fbcsp_lda/tables/20251014-023649_inter_subject_cv_from_json.csv
+[04:35:05] INFO: TXT consolidado → /root/Proyecto/EEG_Clasificador/models/fbcsp_lda/logs/metrics_inter_subject_cv_20251014-023649.txt
+[04:35:05] INFO: TXT de classification reports → /root/Proyecto/EEG_Clasificador/models/fbcsp_lda/logs/classification_reports_by_fold_20251014-023649.txt
+[04:35:05] INFO: Figura consolidada → /root/Proyecto/EEG_Clasificador/models/fbcsp_lda/figures/inter_subject_confusions_20251014-023649_p1.png
+[04:35:05] INFO: Matriz GLOBAL → /root/Proyecto/EEG_Clasificador/models/fbcsp_lda/figures/inter_subject_global_confusion_20251014-023649.png
+[04:35:05] INFO: [GLOBAL] VAL_acc=0.355 | VAL_f1m=0.354 | TEST_acc=0.376 | TEST_f1m=0.375
+[04:35:05] INFO: Log global de esta corrida → /root/Proyecto/EEG_Clasificador/models/fbcsp_lda/logs/20251014-023649_inter_subject_cv_json_20251014-023649.txt

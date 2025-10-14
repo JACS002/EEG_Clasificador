@@ -1,0 +1,192 @@
+[02:35:51] INFO: [RUN riem_inter_subject_fgmdm_20251014-023551] VALID por sujetos + CALIBRACIÓN PER-SUBJECT (k=5 por clase)
+[02:35:51] INFO: Perillas: crop=(0.5, 3.5), motor_only=True, zscore_epoch=False, fb_bands=[(8, 10), (10, 12), (12, 14), (14, 16), (16, 18), (18, 20), (20, 22), (22, 24), (24, 26), (26, 28), (28, 30)], cov=oas, val_ratio_subjects=0.16
+[02:35:51] INFO: Folds cargadas: 5 | sujetos en JSON: 103
+[02:35:51] INFO: [Fold 1] train(82): ['S001', 'S002', 'S004', 'S005', 'S006', 'S007', 'S009', 'S010', 'S011', 'S012', 'S014', 'S015', 'S016', 'S017', 'S019', 'S020', 'S021', 'S022', 'S024', 'S025', 'S026', 'S027', 'S029', 'S030', 'S031', 'S032', 'S034', 'S035', 'S036', 'S037', 'S040', 'S041', 'S042', 'S043', 'S045', 'S046', 'S047', 'S048', 'S050', 'S051', 'S052', 'S053', 'S055', 'S056', 'S057', 'S058', 'S060', 'S061', 'S062', 'S063', 'S065', 'S066', 'S067', 'S068', 'S070', 'S071', 'S072', 'S073', 'S075', 'S076', 'S077', 'S078', 'S080', 'S081', 'S082', 'S083', 'S085', 'S086', 'S087', 'S090', 'S093', 'S094', 'S095', 'S096', 'S098', 'S099', 'S101', 'S102', 'S105', 'S106', 'S107', 'S108']
+[02:35:51] INFO: [Fold 1] test (21): ['S003', 'S008', 'S013', 'S018', 'S023', 'S028', 'S033', 'S039', 'S044', 'S049', 'S054', 'S059', 'S064', 'S069', 'S074', 'S079', 'S084', 'S091', 'S097', 'S103', 'S109']
+[02:35:51] INFO: [Fold 1] split interno → train_sids=69, val_sids=13
+[02:39:22] INFO: [Fold 1] VAL   acc=0.4188 | f1m=0.4145 | n_val=1120
+[02:41:27] INFO: [Fold 1] TEST (per-subject k-shots) S003 → acc=0.2571, n=70
+[02:44:41] INFO: [Fold 1] TEST (per-subject k-shots) S008 → acc=0.5156, n=64
+[02:46:46] INFO: [Fold 1] TEST (per-subject k-shots) S013 → acc=0.4032, n=62
+[02:48:49] INFO: [Fold 1] TEST (per-subject k-shots) S018 → acc=0.2500, n=64
+[02:50:57] INFO: [Fold 1] TEST (per-subject k-shots) S023 → acc=0.3438, n=64
+[02:53:07] INFO: [Fold 1] TEST (per-subject k-shots) S028 → acc=0.2812, n=64
+[02:55:17] INFO: [Fold 1] TEST (per-subject k-shots) S033 → acc=0.3906, n=64
+[02:57:26] INFO: [Fold 1] TEST (per-subject k-shots) S039 → acc=0.2188, n=64
+[02:59:29] INFO: [Fold 1] TEST (per-subject k-shots) S044 → acc=0.4444, n=63
+[03:01:34] INFO: [Fold 1] TEST (per-subject k-shots) S049 → acc=0.4219, n=64
+[03:03:38] INFO: [Fold 1] TEST (per-subject k-shots) S054 → acc=0.3281, n=64
+[03:05:42] INFO: [Fold 1] TEST (per-subject k-shots) S059 → acc=0.3281, n=64
+[03:07:50] INFO: [Fold 1] TEST (per-subject k-shots) S064 → acc=0.4179, n=67
+[03:09:56] INFO: [Fold 1] TEST (per-subject k-shots) S069 → acc=0.4062, n=64
+[03:13:25] INFO: [Fold 1] TEST (per-subject k-shots) S074 → acc=0.2308, n=65
+[03:19:07] INFO: [Fold 1] TEST (per-subject k-shots) S079 → acc=0.2794, n=68
+[03:21:47] INFO: [Fold 1] TEST (per-subject k-shots) S084 → acc=0.3810, n=63
+[03:23:58] INFO: [Fold 1] TEST (per-subject k-shots) S091 → acc=0.3594, n=64
+[03:26:08] INFO: [Fold 1] TEST (per-subject k-shots) S097 → acc=0.2500, n=64
+[03:28:18] INFO: [Fold 1] TEST (per-subject k-shots) S103 → acc=0.4143, n=70
+[03:30:29] INFO: [Fold 1] TEST (per-subject k-shots) S109 → acc=0.3182, n=22
+[03:30:29] INFO: [Fold 1] Classification report (TEST):
+              precision    recall  f1-score   support
+
+   Both Feet     0.3810    0.4036    0.3919       337
+  Both Fists     0.3116    0.3191    0.3153       329
+        Left     0.3429    0.2927    0.3158       328
+       Right     0.3430    0.3642    0.3533       324
+
+    accuracy                         0.3452      1318
+   macro avg     0.3446    0.3449    0.3441      1318
+weighted avg     0.3448    0.3452    0.3444      1318
+
+[03:30:29] INFO: [Fold 2] train(82): ['S001', 'S003', 'S004', 'S005', 'S006', 'S008', 'S009', 'S010', 'S011', 'S013', 'S014', 'S015', 'S016', 'S018', 'S019', 'S020', 'S021', 'S023', 'S024', 'S025', 'S026', 'S028', 'S029', 'S030', 'S031', 'S033', 'S034', 'S035', 'S036', 'S039', 'S040', 'S041', 'S042', 'S044', 'S045', 'S046', 'S047', 'S049', 'S050', 'S051', 'S052', 'S054', 'S055', 'S056', 'S057', 'S059', 'S060', 'S061', 'S062', 'S064', 'S065', 'S066', 'S067', 'S069', 'S070', 'S071', 'S072', 'S074', 'S075', 'S076', 'S077', 'S079', 'S080', 'S081', 'S082', 'S084', 'S085', 'S086', 'S087', 'S091', 'S093', 'S094', 'S095', 'S097', 'S098', 'S099', 'S101', 'S103', 'S105', 'S106', 'S107', 'S109']
+[03:30:29] INFO: [Fold 2] test (21): ['S002', 'S007', 'S012', 'S017', 'S022', 'S027', 'S032', 'S037', 'S043', 'S048', 'S053', 'S058', 'S063', 'S068', 'S073', 'S078', 'S083', 'S090', 'S096', 'S102', 'S108']
+[03:30:29] INFO: [Fold 2] split interno → train_sids=69, val_sids=13
+[03:34:07] INFO: [Fold 2] VAL   acc=0.3861 | f1m=0.3825 | n_val=1067
+[03:36:15] INFO: [Fold 2] TEST (per-subject k-shots) S002 → acc=0.6875, n=64
+[03:38:26] INFO: [Fold 2] TEST (per-subject k-shots) S007 → acc=0.6143, n=70
+[03:40:32] INFO: [Fold 2] TEST (per-subject k-shots) S012 → acc=0.4375, n=64
+[03:42:38] INFO: [Fold 2] TEST (per-subject k-shots) S017 → acc=0.2969, n=64
+[03:44:44] INFO: [Fold 2] TEST (per-subject k-shots) S022 → acc=0.2571, n=70
+[03:46:52] INFO: [Fold 2] TEST (per-subject k-shots) S027 → acc=0.3906, n=64
+[03:49:01] INFO: [Fold 2] TEST (per-subject k-shots) S032 → acc=0.4000, n=70
+[03:51:11] INFO: [Fold 2] TEST (per-subject k-shots) S037 → acc=0.3538, n=65
+[03:53:19] INFO: [Fold 2] TEST (per-subject k-shots) S043 → acc=0.5625, n=64
+[03:55:24] INFO: [Fold 2] TEST (per-subject k-shots) S048 → acc=0.4531, n=64
+[03:57:29] INFO: [Fold 2] TEST (per-subject k-shots) S053 → acc=0.2812, n=64
+[03:59:38] INFO: [Fold 2] TEST (per-subject k-shots) S058 → acc=0.2969, n=64
+[04:01:48] INFO: [Fold 2] TEST (per-subject k-shots) S063 → acc=0.2698, n=63
+[04:03:54] INFO: [Fold 2] TEST (per-subject k-shots) S068 → acc=0.2656, n=64
+[04:05:58] INFO: [Fold 2] TEST (per-subject k-shots) S073 → acc=0.4375, n=64
+[04:08:03] INFO: [Fold 2] TEST (per-subject k-shots) S078 → acc=0.2500, n=64
+[04:10:13] INFO: [Fold 2] TEST (per-subject k-shots) S083 → acc=0.3857, n=70
+[04:12:42] INFO: [Fold 2] TEST (per-subject k-shots) S090 → acc=0.4062, n=64
+[04:14:48] INFO: [Fold 2] TEST (per-subject k-shots) S096 → acc=0.3235, n=68
+[04:16:54] INFO: [Fold 2] TEST (per-subject k-shots) S102 → acc=0.5231, n=65
+[04:19:08] INFO: [Fold 2] TEST (per-subject k-shots) S108 → acc=0.2812, n=64
+[04:19:08] INFO: [Fold 2] Classification report (TEST):
+              precision    recall  f1-score   support
+
+   Both Feet     0.4076    0.4928    0.4462       349
+  Both Fists     0.3495    0.3195    0.3338       338
+        Left     0.3815    0.3860    0.3837       342
+       Right     0.4155    0.3576    0.3844       344
+
+    accuracy                         0.3897      1373
+   macro avg     0.3885    0.3890    0.3870      1373
+weighted avg     0.3888    0.3897    0.3875      1373
+
+[04:19:08] INFO: [Fold 3] train(82): ['S002', 'S003', 'S004', 'S005', 'S007', 'S008', 'S009', 'S010', 'S012', 'S013', 'S014', 'S015', 'S017', 'S018', 'S019', 'S020', 'S022', 'S023', 'S024', 'S025', 'S027', 'S028', 'S029', 'S030', 'S032', 'S033', 'S034', 'S035', 'S037', 'S039', 'S040', 'S041', 'S043', 'S044', 'S045', 'S046', 'S048', 'S049', 'S050', 'S051', 'S053', 'S054', 'S055', 'S056', 'S058', 'S059', 'S060', 'S061', 'S063', 'S064', 'S065', 'S066', 'S068', 'S069', 'S070', 'S071', 'S073', 'S074', 'S075', 'S076', 'S078', 'S079', 'S080', 'S081', 'S083', 'S084', 'S085', 'S086', 'S090', 'S091', 'S093', 'S094', 'S096', 'S097', 'S098', 'S099', 'S102', 'S103', 'S105', 'S106', 'S108', 'S109']
+[04:19:08] INFO: [Fold 3] test (21): ['S001', 'S006', 'S011', 'S016', 'S021', 'S026', 'S031', 'S036', 'S042', 'S047', 'S052', 'S057', 'S062', 'S067', 'S072', 'S077', 'S082', 'S087', 'S095', 'S101', 'S107']
+[04:19:08] INFO: [Fold 3] split interno → train_sids=69, val_sids=13
+[04:22:44] INFO: [Fold 3] VAL   acc=0.3465 | f1m=0.3472 | n_val=1111
+[04:24:56] INFO: [Fold 3] TEST (per-subject k-shots) S001 → acc=0.4714, n=70
+[04:27:05] INFO: [Fold 3] TEST (per-subject k-shots) S006 → acc=0.3281, n=64
+[04:29:14] INFO: [Fold 3] TEST (per-subject k-shots) S011 → acc=0.1719, n=64
+[04:31:29] INFO: [Fold 3] TEST (per-subject k-shots) S016 → acc=0.4219, n=64
+[04:33:36] INFO: [Fold 3] TEST (per-subject k-shots) S021 → acc=0.3429, n=70
+[04:35:38] INFO: [Fold 3] TEST (per-subject k-shots) S026 → acc=0.2812, n=64
+[04:37:38] INFO: [Fold 3] TEST (per-subject k-shots) S031 → acc=0.3906, n=64
+[04:39:43] INFO: [Fold 3] TEST (per-subject k-shots) S036 → acc=0.2500, n=64
+[04:41:43] INFO: [Fold 3] TEST (per-subject k-shots) S042 → acc=0.6250, n=64
+[04:43:47] INFO: [Fold 3] TEST (per-subject k-shots) S047 → acc=0.3125, n=64
+[04:45:47] INFO: [Fold 3] TEST (per-subject k-shots) S052 → acc=0.6094, n=64
+[04:47:47] INFO: [Fold 3] TEST (per-subject k-shots) S057 → acc=0.4286, n=70
+[04:49:47] INFO: [Fold 3] TEST (per-subject k-shots) S062 → acc=0.5625, n=64
+[04:51:47] INFO: [Fold 3] TEST (per-subject k-shots) S067 → acc=0.2500, n=64
+[04:53:47] INFO: [Fold 3] TEST (per-subject k-shots) S072 → acc=0.6615, n=65
+[04:55:49] INFO: [Fold 3] TEST (per-subject k-shots) S077 → acc=0.3750, n=64
+[04:57:53] INFO: [Fold 3] TEST (per-subject k-shots) S082 → acc=0.2656, n=64
+[04:59:52] INFO: [Fold 3] TEST (per-subject k-shots) S087 → acc=0.2031, n=64
+[05:01:59] INFO: [Fold 3] TEST (per-subject k-shots) S095 → acc=0.3571, n=70
+[05:03:59] INFO: [Fold 3] TEST (per-subject k-shots) S101 → acc=0.3286, n=70
+[05:05:58] INFO: [Fold 3] TEST (per-subject k-shots) S107 → acc=0.2286, n=70
+[05:05:58] INFO: [Fold 3] Classification report (TEST):
+              precision    recall  f1-score   support
+
+   Both Feet     0.4585    0.4319    0.4448       345
+  Both Fists     0.3307    0.3623    0.3458       345
+        Left     0.3522    0.3903    0.3703       351
+       Right     0.3668    0.3118    0.3370       340
+
+    accuracy                         0.3744      1381
+   macro avg     0.3770    0.3741    0.3745      1381
+weighted avg     0.3770    0.3744    0.3746      1381
+
+[05:05:58] INFO: [Fold 4] train(83): ['S001', 'S002', 'S003', 'S004', 'S006', 'S007', 'S008', 'S009', 'S011', 'S012', 'S013', 'S014', 'S016', 'S017', 'S018', 'S019', 'S021', 'S022', 'S023', 'S024', 'S026', 'S027', 'S028', 'S029', 'S031', 'S032', 'S033', 'S034', 'S036', 'S037', 'S039', 'S040', 'S042', 'S043', 'S044', 'S045', 'S047', 'S048', 'S049', 'S050', 'S052', 'S053', 'S054', 'S055', 'S057', 'S058', 'S059', 'S060', 'S062', 'S063', 'S064', 'S065', 'S067', 'S068', 'S069', 'S070', 'S072', 'S073', 'S074', 'S075', 'S077', 'S078', 'S079', 'S080', 'S082', 'S083', 'S084', 'S085', 'S087', 'S090', 'S091', 'S093', 'S095', 'S096', 'S097', 'S098', 'S101', 'S102', 'S103', 'S105', 'S107', 'S108', 'S109']
+[05:05:58] INFO: [Fold 4] test (20): ['S005', 'S010', 'S015', 'S020', 'S025', 'S030', 'S035', 'S041', 'S046', 'S051', 'S056', 'S061', 'S066', 'S071', 'S076', 'S081', 'S086', 'S094', 'S099', 'S106']
+[05:05:58] INFO: [Fold 4] split interno → train_sids=70, val_sids=13
+[05:09:20] INFO: [Fold 4] VAL   acc=0.3678 | f1m=0.3678 | n_val=1101
+[05:11:22] INFO: [Fold 4] TEST (per-subject k-shots) S005 → acc=0.2656, n=64
+[05:13:25] INFO: [Fold 4] TEST (per-subject k-shots) S010 → acc=0.4375, n=64
+[05:15:28] INFO: [Fold 4] TEST (per-subject k-shots) S015 → acc=0.4531, n=64
+[05:17:30] INFO: [Fold 4] TEST (per-subject k-shots) S020 → acc=0.3594, n=64
+[05:19:32] INFO: [Fold 4] TEST (per-subject k-shots) S025 → acc=0.4062, n=64
+[05:21:36] INFO: [Fold 4] TEST (per-subject k-shots) S030 → acc=0.4429, n=70
+[05:23:38] INFO: [Fold 4] TEST (per-subject k-shots) S035 → acc=0.5000, n=70
+[05:25:39] INFO: [Fold 4] TEST (per-subject k-shots) S041 → acc=0.2353, n=68
+[05:27:41] INFO: [Fold 4] TEST (per-subject k-shots) S046 → acc=0.3143, n=70
+[05:29:42] INFO: [Fold 4] TEST (per-subject k-shots) S051 → acc=0.3286, n=70
+[05:31:44] INFO: [Fold 4] TEST (per-subject k-shots) S056 → acc=0.3281, n=64
+[05:33:47] INFO: [Fold 4] TEST (per-subject k-shots) S061 → acc=0.4714, n=70
+[05:35:48] INFO: [Fold 4] TEST (per-subject k-shots) S066 → acc=0.3000, n=70
+[05:37:51] INFO: [Fold 4] TEST (per-subject k-shots) S071 → acc=0.4857, n=70
+[05:40:07] INFO: [Fold 4] TEST (per-subject k-shots) S076 → acc=0.2344, n=64
+[05:42:22] INFO: [Fold 4] TEST (per-subject k-shots) S081 → acc=0.3281, n=64
+[05:44:23] INFO: [Fold 4] TEST (per-subject k-shots) S086 → acc=0.4928, n=69
+[05:46:25] INFO: [Fold 4] TEST (per-subject k-shots) S094 → acc=0.4531, n=64
+[05:48:26] INFO: [Fold 4] TEST (per-subject k-shots) S099 → acc=0.2031, n=64
+[05:50:28] INFO: [Fold 4] TEST (per-subject k-shots) S106 → acc=0.4000, n=70
+[05:50:28] INFO: [Fold 4] Classification report (TEST):
+              precision    recall  f1-score   support
+
+   Both Feet     0.4764    0.3634    0.4123       333
+  Both Fists     0.3205    0.3720    0.3444       336
+        Left     0.4103    0.3798    0.3945       337
+       Right     0.3281    0.3776    0.3511       331
+
+    accuracy                         0.3732      1337
+   macro avg     0.3838    0.3732    0.3755      1337
+weighted avg     0.3838    0.3732    0.3756      1337
+
+[05:50:28] INFO: [Fold 5] train(83): ['S001', 'S002', 'S003', 'S005', 'S006', 'S007', 'S008', 'S010', 'S011', 'S012', 'S013', 'S015', 'S016', 'S017', 'S018', 'S020', 'S021', 'S022', 'S023', 'S025', 'S026', 'S027', 'S028', 'S030', 'S031', 'S032', 'S033', 'S035', 'S036', 'S037', 'S039', 'S041', 'S042', 'S043', 'S044', 'S046', 'S047', 'S048', 'S049', 'S051', 'S052', 'S053', 'S054', 'S056', 'S057', 'S058', 'S059', 'S061', 'S062', 'S063', 'S064', 'S066', 'S067', 'S068', 'S069', 'S071', 'S072', 'S073', 'S074', 'S076', 'S077', 'S078', 'S079', 'S081', 'S082', 'S083', 'S084', 'S086', 'S087', 'S090', 'S091', 'S094', 'S095', 'S096', 'S097', 'S099', 'S101', 'S102', 'S103', 'S106', 'S107', 'S108', 'S109']
+[05:50:28] INFO: [Fold 5] test (20): ['S004', 'S009', 'S014', 'S019', 'S024', 'S029', 'S034', 'S040', 'S045', 'S050', 'S055', 'S060', 'S065', 'S070', 'S075', 'S080', 'S085', 'S093', 'S098', 'S105']
+[05:50:28] INFO: [Fold 5] split interno → train_sids=70, val_sids=13
+[05:54:32] INFO: [Fold 5] VAL   acc=0.3255 | f1m=0.3236 | n_val=1106
+[05:56:36] INFO: [Fold 5] TEST (per-subject k-shots) S004 → acc=0.3594, n=64
+[05:58:37] INFO: [Fold 5] TEST (per-subject k-shots) S009 → acc=0.2344, n=64
+[06:00:40] INFO: [Fold 5] TEST (per-subject k-shots) S014 → acc=0.2812, n=64
+[06:02:42] INFO: [Fold 5] TEST (per-subject k-shots) S019 → acc=0.4219, n=64
+[06:05:08] INFO: [Fold 5] TEST (per-subject k-shots) S024 → acc=0.2600, n=50
+[06:07:32] INFO: [Fold 5] TEST (per-subject k-shots) S029 → acc=0.4857, n=70
+[06:09:44] INFO: [Fold 5] TEST (per-subject k-shots) S034 → acc=0.4154, n=65
+[06:12:02] INFO: [Fold 5] TEST (per-subject k-shots) S040 → acc=0.2031, n=64
+[06:14:07] INFO: [Fold 5] TEST (per-subject k-shots) S045 → acc=0.4375, n=64
+[06:16:26] INFO: [Fold 5] TEST (per-subject k-shots) S050 → acc=0.2812, n=64
+[06:18:29] INFO: [Fold 5] TEST (per-subject k-shots) S055 → acc=0.5469, n=64
+[06:20:33] INFO: [Fold 5] TEST (per-subject k-shots) S060 → acc=0.5781, n=64
+[06:22:38] INFO: [Fold 5] TEST (per-subject k-shots) S065 → acc=0.4571, n=70
+[06:24:59] INFO: [Fold 5] TEST (per-subject k-shots) S070 → acc=0.3750, n=64
+[06:27:08] INFO: [Fold 5] TEST (per-subject k-shots) S075 → acc=0.4531, n=64
+[06:29:14] INFO: [Fold 5] TEST (per-subject k-shots) S080 → acc=0.3906, n=64
+[06:31:22] INFO: [Fold 5] TEST (per-subject k-shots) S085 → acc=0.3750, n=64
+[06:33:30] INFO: [Fold 5] TEST (per-subject k-shots) S093 → acc=0.5625, n=64
+[06:36:02] INFO: [Fold 5] TEST (per-subject k-shots) S098 → acc=0.2969, n=64
+[06:38:21] INFO: [Fold 5] TEST (per-subject k-shots) S105 → acc=0.4375, n=64
+[06:38:21] INFO: [Fold 5] Classification report (TEST):
+              precision    recall  f1-score   support
+
+   Both Feet     0.3938    0.5238    0.4496       315
+  Both Fists     0.3902    0.3489    0.3684       321
+        Left     0.4000    0.3115    0.3503       321
+       Right     0.3963    0.3975    0.3969       322
+
+    accuracy                         0.3948      1279
+   macro avg     0.3951    0.3954    0.3913      1279
+weighted avg     0.3951    0.3948    0.3910      1279
+
+[06:38:21] INFO: CSV consolidado → /root/Proyecto/EEG_Clasificador/models/riemanniano_mdm/tables/20251014-023551_riem_inter_fgmdm_calib.csv
+[06:38:21] INFO: TXT consolidado → /root/Proyecto/EEG_Clasificador/models/riemanniano_mdm/logs/20251014-023551_riem_inter_fgmdm_calib.txt
+[06:38:21] INFO: Figura consolidada → /root/Proyecto/EEG_Clasificador/models/riemanniano_mdm/figures/riem_inter_subject_confusions_fgmdm_20251014-023551_p1.png
+[06:38:21] INFO: Matriz GLOBAL → /root/Proyecto/EEG_Clasificador/models/riemanniano_mdm/figures/riem_inter_subject_global_confusion_fgmdm_20251014-023551.png
+[06:38:21] INFO: [GLOBAL] VAL_acc=0.369 | VAL_f1m=0.367 | TEST_acc=0.375 | TEST_f1m=0.374
+[06:38:21] INFO: Log global → /root/Proyecto/EEG_Clasificador/models/riemanniano_mdm/logs/20251014-023551_riem_inter_subject_fgmdm_20251014-023551.txt
