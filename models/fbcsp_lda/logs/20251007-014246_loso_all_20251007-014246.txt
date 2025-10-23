@@ -1,7 +1,0 @@
-[01:42:46] INFO: [RUN loso_all_20251007-014246] Inicio de ejecución LOSO
-[01:42:46] INFO: Perillas: {'crop_window': (0.5, 4.5), 'motor_only': False, 'zscore_epoch': False, 'fb_bands': '[(8, 10), (10, 12), (12, 14), (14, 16), (16, 18), (18, 20), (20, 22), (22, 24), (24, 26), (26, 28), (28, 30)]', 'n_csp': 4, 'calibrate_k': 5}
-[01:42:46] INFO: (strict=OFF) tests → ['S001', 'S002', 'S003', 'S004', 'S005', 'S006', 'S007', 'S008', 'S009', 'S010'] ...
-[01:45:53] INFO: [LOSO] test=S001 | acc=0.443 | f1m=0.441 | n_test=70 | calib_k=5
-[01:49:06] INFO: [LOSO] test=S002 | acc=0.547 | f1m=0.512 | n_test=64 | calib_k=5
-[01:52:21] INFO: [LOSO] test=S003 | acc=0.257 | f1m=0.236 | n_test=70 | calib_k=5
-[01:55:36] INFO: [LOSO] test=S004 | acc=0.391 | f1m=0.386 | n_test=64 | calib_k=5
