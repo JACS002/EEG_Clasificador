@@ -187,240 +187,486 @@ Para cada sujeto de TEST, tomamos **k=5** épocas por clase como **calibración*
 **En este repo:** `model='fgmdm'` (por defecto en inter-sujeto) ⇒ el clasificador activo es **FgMDM**.
 
 
-## 6. EEGNet + Fine-Tuning Progresivo por Sujeto (MI-EEG, 4 clases)
+---
 
-**Objetivo:**  
-Clasificar imaginación motora (MI) en 4 clases (`Left`, `Right`, `Both Fists`, `Both Feet`) usando solo **8 canales motores de EEG**, mediante una red **EEGNet** y un protocolo realista de **calibración/fine-tuning progresivo por sujeto**.
+# 🧠 EEGNet (4 clases, 8 canales) con Augmentaciones, TTA y Fine-Tuning Progresivo
+
+Este proyecto implementa un clasificador EEGNet en PyTorch para señales EEG de imaginación motora (MI-EEG), con:
+- Entrenamiento global (5 folds) sobre datos sin balancear por sujeto/clase.
+- **Augmentaciones (jitter, ruido, channel-drop)** inspiradas en CNN+Transformer.
+- **SGDR (CosineAnnealingWarmRestarts)** para ajustar la tasa de aprendizaje.
+- **Label smoothing**, **pesos por clase** y **max-norm** como regularizaciones.
+- **Test-Time Augmentation (TTA)** por desplazamientos temporales.
+- **Fine-Tuning progresivo** por sujeto con penalización L2SP.
 
 ---
 
-### ¿Qué problema resolvemos?
+## 📦 Estructura general
 
-Cuando intentamos usar un **BCI (interfaz cerebro-computador)** con personas nuevas, el modelo suele bajar rendimiento porque cada cerebro es distinto (morfología, impedancias, atención, fatiga, etc.).
-
-Nuestra estrategia:
-1. **Aprender un modelo global** con muchos sujetos (para captar patrones generales).  
-2. **Personalizarlo ligeramente** con pocos ensayos etiquetados del nuevo usuario (**fine-tuning progresivo**), de forma rápida y estable.
-
----
-
-### ¿Qué es EEG y qué entrada ve la red?
-
-- **EEG:** voltajes medidos en el cuero cabelludo.  
-- **Canales usados (motores):** `C3, Cz, C4, FC3, FC4, CP3, CPz, CP4`.
-
-**Procesamiento de entrada:**
-- Para cada evento (T1/T2), extraemos una **ventana de 3 segundos**, muestreada a **160 Hz**.  
-- Normalizamos cada época (z-score por canal) para estabilizar amplitudes.  
-
-**Cada ejemplo:**  
-Matriz de tamaño `(Tiempo × Canales)`  
-**Etiquetas:**  
-`0=Left`, `1=Right`, `2=Both Fists`, `3=Both Feet`.
+| Bloque | Descripción |
+|:--|:--|
+| **Carga de datos** | Lectura de archivos EDF, extracción de epochs `[-1,5]s`, selección de 8 canales, z-score por época. |
+| **Normalización** | Estandarización por canal usando estadísticas del conjunto de entrenamiento. |
+| **Modelo** | EEGNet con filtros temporales y espaciales separables, salida lineal para 4 clases. |
+| **Entrenamiento global** | Augments + SGDR + label smoothing + pesos por clase + max-norm. |
+| **Evaluación (Test)** | TTA por *time-shifts* y métricas (ACC, F1, matriz de confusión). |
+| **Fine-tuning progresivo** | Adaptación por sujeto con L2SP y congelamiento progresivo de capas. |
 
 ---
 
-### ¿Qué es una red neuronal y cómo decide una clase?
+## ⚙️ Configuración global (hiperparámetros)
 
-Una red neuronal transforma la entrada a través de capas hasta llegar a una **representación útil para clasificar**.  
-La última capa produce **4 números** (uno por clase).  
-Aplicamos **softmax** → obtenemos probabilidades.  
-
-Entrenamos la red para maximizar la probabilidad de la clase correcta con:  
-- **Función de pérdida:** *Cross-Entropy*  
-- **Optimizador:** *Adam*
-
----
-
-### Arquitectura: EEGNet
-
-EEGNet está diseñada específicamente para EEG.  
-La entrada tiene forma `(Batch, 1, Tiempo, Canales)` y pasa por **3 bloques convolucionales + cabeza densa**:
-
-Entrada (B, 1, T, C)
-│
-├─ Bloque 1: Convolución Temporal → aprende filtros en el tiempo
-│ + BatchNorm + ELU
-│
-├─ Bloque 2: Convolución Depthwise Espacial → patrones espaciales
-│ + BN + ELU + AvgPool + Dropout
-│
-├─ Bloque 3: Convolución Separable Temporal → refina patrones
-│ + BN + ELU + AvgPool + Dropout
-│
-└─ Cabeza: Flatten → Dense(80) → Dense(4) + Softmax
-
-
-**Intuición:**
-- **Temporal:** aprende ritmos relevantes (μ/beta).  
-- **Espacial (depthwise):** combina canales como una CSP aprendida.  
-- **Separable temporal:** refina patrones con pocos parámetros.  
-- **Cabeza:** traduce características a probabilidades por clase.
+| Categoría | Parámetro | Valor | Explicación |
+|:--|:--|:--|:--|
+| Datos | FS | 160 Hz | Frecuencia de muestreo objetivo |
+| | TMIN/TMAX | -1.0 / 5.0 s | Ventana temporal de cada ensayo |
+| | EXPECTED_8 | C3,C4,Cz,CP3,CP4,FC3,FC4,FCz | Canales usados |
+| | NORM_EPOCH_ZSCORE | True | Z-score por época y canal |
+| Split | VAL_SUBJECT_FRAC | 0.18 | % de sujetos usados como validación |
+| | VAL_STRAT_SUBJECT | True | Validación estratificada por etiqueta dominante |
+| Train | EPOCHS_GLOBAL | 100 | Épocas máximas |
+| | BATCH_SIZE | 64 | Tamaño de batch |
+| | LR_INIT | 1e-2 | Tasa inicial de aprendizaje |
+| | SGDR_T0 / SGDR_Tmult | 6 / 2 | Ciclos coseno: 6, 12, 24… |
+| | GLOBAL_PATIENCE | 10 | Early stopping |
+| EEGNet | F1 / D | 24 / 2 | Filtros temporales y multiplicador depthwise |
+| | kernel_t / k_sep | 64 / 16 | Kernels temporal y separable |
+| | pool1_t / pool2_t | 4 / 6 | Reducción temporal por bloque |
+| | drop1_p / drop2_p | 0.35 / 0.6 | Dropout |
+| | chdrop_p | 0.10 | Channel dropout |
+| Loss | label_smoothing | 0.05 | Suavizado de etiquetas |
+| | boost (clase 2/3) | 1.25 / 1.05 | Pesos extra para clases raras |
+| Augments | p_jitter / p_noise / p_chdrop | 0.35 / 0.35 / 0.15 | Probabilidad de aplicar cada tipo |
+| | max_jitter_frac / noise_std | 0.03 / 0.03 | Magnitud del jitter y ruido |
+| TTA | shifts_s | ±0.075,…,0 s | Desplazamientos en inferencia |
+| FT | CALIB_CV_FOLDS | 4 | Folds internos por sujeto |
+| | FT_EPOCHS | 30 | Épocas por modo |
+| | FT_HEAD_LR / FT_BASE_LR | 1e-3 / 5e-5 | LR para cabeza y base |
+| | FT_L2SP | 1e-4 | Penalización de alejamiento de pesos globales |
+| | FT_PATIENCE / FT_VAL_RATIO | 5 / 0.2 | Early stopping y validación interna |
 
 ---
 
-### Evaluación: cómo evitamos *data leakage*
+## 🧠 Arquitectura EEGNet
 
-Validación **inter-sujeto (K=5 folds):**
-- Cada *fold* tiene sujetos **no vistos** en test.  
-- Dentro del *train*, se reserva un **15% de sujetos para validación** (early stopping).  
-- Así, el modelo no ve nunca el test antes de tiempo.
+### Estructura general
+Entrada: `(B, 1, T, C)` → Salida: `(B, 4)`  
+(`B`: batch, `T`: tiempo ≈ 960, `C`: canales=8)
 
----
+1. **ChannelDropout (p=0.10)**  
+   Apaga canales completos aleatoriamente (simula fallos de electrodos).
 
-### Entrenamiento Global (Inter-Sujeto)
+2. **Bloque temporal**
+   ```python
+   Conv2d(1 → F1, kernel=(64,1)) → BN → ELU
+   ```
+   Extrae patrones de oscilación y filtros pasa-banda temporales.
 
-**Dataset:**  
-Hasta **21 ensayos por clase y sujeto** (con reposición si faltan) → dataset balanceado.
+3. **Bloque espacial (depthwise)**
+   ```python
+   Conv2d(F1 → F1*D, kernel=(1, n_ch), groups=F1)
+   AvgPool2d(4,1) → Dropout(0.35)
+   ```
+   Aprende combinaciones espaciales (proyecciones de canales) por cada filtro temporal.
 
-**Entrenamiento:**
-- Modelo: EEGNet  
-- Optimizador: Adam  
-- Épocas: 100 (máximo)  
-- *Early stopping* por `val_acc`
+4. **Bloque separable temporal**
 
-**Evaluación:**
-- `accuracy` y `classification report` en sujetos no vistos.
+   ```python
+   Conv2d(F2 → F2, kernel=(16,1), groups=F2)
+   Conv2d(F2 → F2, kernel=(1,1))
+   AvgPool2d(6,1) → Dropout(0.6)
+   ```
+   Refina dinámicas temporales específicas con pocos parámetros.
 
----
+5. **Head**
 
-### Fine-Tuning Progresivo por Sujeto (Calibración rápida)
+   ```python
+   Flatten → Linear(1920→128) → ELU → Linear(128→4)
+   ```
+   Proyección final a clases.
 
-Cuando llega un **nuevo sujeto (de test)**:
+## 🧩 Entrenamiento global
 
-1. Hacemos **4-fold CV interno** con solo sus datos (≈ 75% calibración / 25% hold-out).  
-2. Entrenamos **tres modos** con *early stopping* + penalización **L2-SP**:
+- **Optimizador:** Adam (`LR inicial = 1e-2`)
+- **Scheduler:** CosineAnnealingWarmRestarts (SGDR)  
+  - Ciclos: 6, 12, 24, 48 épocas…  
+  - Cada reinicio restablece el LR alto para explorar nuevos mínimos.
+- **Augmentaciones:** jitter temporal, ruido gaussiano, channel-drop
+- **Pérdida:** Weighted Soft CrossEntropy con *label smoothing* (0.05)
+- **Regularizaciones:**
+  - Max-norm = 2.0 (filtros espaciales y FC)
+  - Dropout + ChannelDropout
+  - Label smoothing + pesos por clase
 
-| Modo | Capas entrenadas | Descripción |
-|------|------------------|-------------|
-| `out` | Solo salida | Ajusta el clasificador final |
-| `head` | FC + salida | Personaliza la cabeza entera |
-| `spatial+head` | Convs espaciales + separables + cabeza | Congela filtros temporales globales |
+## 🔄 CosineAnnealingWarmRestarts (SGDR)
 
-Elegimos el modo con mejor `accuracy` en el *hold-out* del sujeto → se usa para predecir todo su set.
+Controla la **tasa de aprendizaje (LR)** de forma cíclica, alternando fases de exploración y refinamiento.
 
-**Por qué funciona:**  
-Con pocos ensayos del usuario, ajustar pocas capas + L2-SP (penaliza alejarse del modelo global) evita sobreajuste y personaliza la fisiología.
+### 🧠 Intuición
+- **Grandes saltos** → explora nuevos mínimos.  
+- **LR pequeño** → refina soluciones locales.  
+- **Reinicios** → permite escapar de mínimos subóptimos.
 
----
+### ⚙️ Parámetros
+- **T₀ = 6** → duración del primer ciclo (épocas).  
+- **T_mult = 2** → cada ciclo siguiente dura el doble: 6, 12, 24, 48, …
 
-### Hiperparámetros
+El LR se reinicia al valor inicial en cada ciclo, generando una curva coseno decreciente dentro de cada fase.
 
-#### Generales
-| Parámetro | Valor | Descripción |
-|------------|--------|-------------|
-| `FS` | 160 Hz | Frecuencia de muestreo |
-| `WINDOW_MODE` | '3s' | Duración de ventana |
-| `EXPECTED_8` | 8 canales | C3, Cz, C4, FC3, FC4, CP3, CPz, CP4 |
+### 💡 Consejos prácticos
+| Situación | Ajuste recomendado |
+|:--|:--|
+| `val_acc` oscila mucho | Aumenta **T₀** o reduce **LR_INIT** |
+| Entrenamiento estancado | Sube **LR_INIT** o acorta **T₀** |
 
-#### Entrenamiento Global
-| Parámetro | Valor | Descripción |
-|------------|--------|-------------|
-| `N_FOLDS` | 5 | CV por sujeto |
-| `BATCH_SIZE` | 16 | Tamaño de lote |
-| `EPOCHS_GLOBAL` | 100 | Máximo de épocas |
-| `LR` | 1e-3 | Tasa de aprendizaje |
-| `GLOBAL_VAL_SPLIT` | 0.15 | Validación por sujeto |
-| `GLOBAL_PATIENCE` | 10 | Early stopping |
-| `LOG_EVERY` | 5 | Log cada 5 épocas |
+✨ **Idea clave:** equilibrar exploración (LR alto) y refinamiento (LR bajo) para alcanzar mejores mínimos sin sobreentrenar.
 
-#### Fine-Tuning
-| Parámetro | Valor | Descripción |
-|------------|--------|-------------|
-| `CALIB_CV_FOLDS` | 4 | CV interno del sujeto |
-| `FT_EPOCHS` | 30 | Máx. épocas por etapa |
-| `FT_BASE_LR` | 5e-5 | LR para capas base |
-| `FT_HEAD_LR` | 1e-3 | LR para cabeza |
-| `FT_L2SP` | 1e-4 | Penalización L2-SP |
-| `FT_PATIENCE` | 5 | Early stopping FT |
-| `FT_VAL_RATIO` | 0.2 | Validación interna del sujeto |
+## 🌈 Augmentaciones (entrenamiento)
 
-**Regla práctica:**  
-- Si tienes **pocos ensayos**, usa `out` o `head`.  
-- Si tienes **más datos**, prueba `spatial+head`.  
-- Si ves sobreajuste → sube `FT_L2SP` o baja `LR`.
+Tres transformaciones principales se aplican por batch (B, 1, T, C):
 
----
+### 1️⃣ Jitter temporal
+Desplaza la señal unos milisegundos (roll en el eje temporal).  
+**max_jitter_frac = 0.03**  → ±180 ms para 6 s (T≈960)  
 
-### Métricas y Salidas
-
-- **Global accuracy por fold** (inter-sujeto puro).  
-- **Fine-tuning accuracy** y **Δ(FT - Global)** (mejora por personalización).  
-- **Classification reports:** precisión, recall, F1 por clase.  
-- **Matriz de confusión global** acumulada (todos los folds).
+**Motivo:** simula pequeñas desincronizaciones del inicio del ensayo (onset).  
+**Rango típico:** 0.02–0.05 (±120–300 ms).  
 
 ---
 
-## Evaluación INTRA-Sujeto (Fine-Tuning Progresivo dentro del mismo sujeto)
+### 2️⃣ Ruido gaussiano
+**noise_std = 0.03**  
 
-En el modo **INTRA**, evaluamos el rendimiento **dentro del mismo sujeto**.  
-Para cada persona, realizamos una **validación cruzada k-fold** con sus propias épocas.
-
-En cada fold:
-- Partimos de un **modelo global** (pre-entrenado con todos los sujetos).
-- Lo **ajustamos ligeramente** a ese sujeto mediante **fine-tuning progresivo**.
-- Elegimos la etapa (`out`, `head` o `spatial+head`) que mejor rinde en validación.
-- Probamos esa etapa en el **test del fold**.
+**Motivo:** mejora la robustez frente a ruido fisiológico y electrónico.  
+**Rango recomendado:** σ = 0.01–0.05 para señales EEG normalizadas (z-scoreadas).  
 
 ---
 
-### Flujo de INTRA (paso a paso)
+### 3️⃣ Channel-drop
+**p_chdrop = 0.15**, **max_chdrop = 1**  
 
-#### Pre-entrenamiento global (pretrain)
+**Motivo:** incrementa la robustez espacial ante la pérdida o mal contacto de electrodos.  
+**Recomendación:** apagar 1–2 canales cuando se trabaja con 8 canales totales.  
 
-- Mezclamos **todas las épocas de todos los sujetos** (sin limitar a 21 por clase).  
-- Entrenamos un modelo **EEGNet global** durante hasta **100 épocas** (por defecto).  
-- Este modelo sirve como **base inicial** para todos los fine-tuning posteriores.
+## 🧱 Regularizaciones
 
----
+### 🧩 Label Smoothing (ε=0.05)
+Suaviza las etiquetas para evitar sobreconfianza:
 
-#### k-Fold por sujeto
+**Fórmula:**
+\[
+\tilde{y} = (1 - \varepsilon) \cdot \text{one\_hot} + \frac{\varepsilon}{K}
+\]
 
-Para cada sujeto `Sxyz`:
-
-1. **División interna (k-fold estratificado):**  
-   - Dividimos solo las épocas de ese sujeto en `k` folds (por ejemplo, `k=5`),  
-     manteniendo las clases balanceadas en cada fold.
-
-2. **En cada fold:**
-
-   **a) Calibración / Validación**  
-   - Dentro del conjunto de *train* del fold, hacemos un split adicional (p. ej. 20% para validación).
-
-   **b) Fine-Tuning Progresivo**  
-   - Clonamos el **modelo global pre-entrenado**.  
-   - Entrenamos tres configuraciones diferentes:
-
-     | Modo | Capas entrenadas | Descripción |
-     |------|------------------|-------------|
-     | `out` | Solo la capa de salida | Rápido y seguro con pocos datos |
-     | `head` | FC + salida | Más capacidad de adaptación |
-     | `spatial+head` | Convoluciones espaciales + separables + cabeza | Congela los filtros temporales globales |
-
-   - En todos los modos se aplica **L2-SP**, una regularización que penaliza desviarse del modelo global → reduce el sobreajuste.
-
-   **c) Selección de modelo**
-   - Elegimos la etapa con **mayor `val_acc`** (accuracy en validación dentro del fold).
-
-   **d) Prueba**
-   - Evaluamos esa etapa elegida en el **test del fold** (épocas del mismo sujeto, nunca vistas en ese fold).
+Esto reduce la probabilidad de que el modelo se vuelva demasiado confiado en una sola clase, mejorando la **calibración** de las predicciones.
 
 ---
 
-#### Agregación de resultados
+### ⚖️ Pesos por clase
+Para corregir el desbalance de clases en el entrenamiento se asignan pesos distintos a las clases minoritarias:
 
-- **Por sujeto:**  
-  Promediamos `accuracy` y `F1-macro` sobre sus `k` folds.
+- **Clase 2 (Both Fists):** ×1.25  
+- **Clase 3 (Both Feet):** ×1.05  
 
-- **Global INTRA:**  
-  Promedio de las métricas de todos los sujetos → mide el rendimiento medio de personalización dentro del sujeto.
+Esto aumenta la contribución de las clases menos frecuentes en la función de pérdida y ayuda a equilibrar el rendimiento entre categorías.
 
 ---
 
-> 🧠 **Resumen:**  
-> El protocolo INTRA evalúa la capacidad del modelo global de adaptarse a cada sujeto con pocos datos.  
-> Combina transferencia de aprendizaje, regularización L2-SP y validación cruzada interna para medir un rendimiento realista de calibración personalizada.
+### 🧮 Max-Norm
+Se aplica un límite **L2 máximo (2.0)** sobre los pesos de los filtros.  
+Este método evita la explosión de pesos y mejora la **estabilidad del entrenamiento**.  
+Si el modelo sobreajusta, se puede reducir el límite a 1.8; si no aprende bien, puede aumentarse a 2.5–3.0.
+
+---
+
+## 🔮 Inferencia: Test-Time Augmentation (TTA)
+
+Durante la fase de inferencia, cada señal EEG se **desplaza ligeramente en el tiempo** y se promedian las predicciones (logits) para mejorar la robustez.
+
+**Desplazamientos usados (en segundos):**  
+[-0.075, -0.05, -0.025, 0, +0.025, +0.05, +0.075]
+
+**Propósito:**  
+Aumentar la resistencia a pequeñas desalineaciones temporales entre ensayos.
+
+**Costo:**  
+Proporcional al número de desplazamientos (más TTA = más tiempo de inferencia).
+
+**Recomendaciones:**
+- Máximo rendimiento: usar 5–7 desplazamientos.  
+- Cuando el tiempo sea crítico: usar 3 desplazamientos ([-0.05, 0, +0.05]).
+
+---
+
+## 🔧 Fine-Tuning progresivo por sujeto
+
+Cada sujeto de test se adapta mediante **fine-tuning** interno (4 folds por sujeto), ajustando partes específicas del modelo sin olvidar el conocimiento global.
+
+**Modos de ajuste:**
+- **out:** solo la capa de salida  
+- **head:** capa totalmente conectada + salida  
+- **spatial+head:** bloque espacial + cabeza del modelo  
+
+**Parámetros clave:**
+- LR base: 5e-5  
+- LR cabeza: 1e-3  
+- L2SP: 1e-4  
+- Patience (early stopping): 5  
+- Validación interna: 20%  
+
+El objetivo es **personalizar el modelo a cada sujeto** preservando las representaciones generales aprendidas.
+
+---
+
+## 📊 Métricas y salidas
+
+- **Accuracy global** y **F1 macro** promedio.  
+- Curvas de entrenamiento: `training_curve_foldX.png`  
+- Matrices de confusión: `confusion_global_foldX.png`  
+- Resultados del fine-tuning: `acc_global`, `acc_ft` y diferencia `Δ(FT-Global)`.
+
+---
+
+## 💡 Cheatsheet de ajuste
+
+| Problema | Causa posible | Solución sugerida |
+|:--|:--|:--|
+| **Overfitting (Train↑, Val↓)** | Modelo muy complejo o augmentaciones suaves | Subir dropout, aumentar ε de Label Smoothing, reducir F1 |
+| **Underfitting (Train↓, Val↓)** | LR demasiado bajo o augmentaciones muy fuertes | Aumentar LR, reducir ruido/jitter |
+| **Oscilaciones en validación** | LR alto o ciclos SGDR muy cortos | Aumentar T₀ o reducir LR inicial |
+| **Mala precisión en clases 2/3** | Pocas muestras o sin boost | Subir pesos (1.4 / 1.2) |
+| **Modelo inestable** | Max-norm demasiado alto | Bajar a 1.8–2.0 |
+
+---
 
 
-> 🔍 **Resumen:**  
-> EEGNet + Fine-Tuning Progresivo permite transferir un modelo global a nuevos sujetos con mínima calibración, manteniendo estabilidad y mejorando la personalización en escenarios de BCI realistas.
+## 🧮 Flujo resumido del pipeline
+```bash
+raw EDF ─► selección de 8 canales
+        └► epoch [-1, 5] s @160 Hz
+            └► z-score por época
+                └► split Kfold5 (train/val/test)
+                    └► estandarización canal-fit(train)
+                        └► EEGNet + Augments
+                            └► Train con SGDR
+                                └► Test con TTA
+                                    └► Fine-tuning por sujeto (L2SP)
+```
+
+
+# 🧠 CNN+Transformer para MI-EEG (4 clases, 8 canales)
+
+Con sampler balanceado, Focal Loss, Warmup+Cosine, EMA, TTA y Fine-Tuning Progresivo.
+
+Este modelo combina **CNNs** (para aprender patrones locales) y **Transformers** (para dependencias globales) en la clasificación de señales EEG de imaginación motora. Usa 8 canales seleccionados y una ventana de 6 s, con técnicas modernas de regularización y calibración por sujeto.
+
+---
+
+## 📦 Datos y preprocesamiento
+
+- **Ventana temporal:** [-1, 5] s (6 s totales)  
+- **Canales usados (8):** C3, C4, Cz, CP3, CP4, FC3, FC4, FCz  
+- **Runs utilizados:**
+  - R04, R08, R12 → T1/T2 = left/right  
+  - R06, R10, R14 → T1/T2 = both fists/both feet
+
+**Preprocesamiento configurable:**
+- Filtro notch 60 Hz (`DO_NOTCH=True`)  
+- Band-pass opcional 4–38 Hz (`DO_BANDPASS=False`)  
+- Referencia promedio (CAR) opcional  
+- Resample opcional (`RESAMPLE_HZ=None`)  
+- `ZSCORE_PER_EPOCH=False` → usa estandarización por canal  
+- **Normalización:** por canal (fit en train, aplicado a val/test)
+
+---
+
+## 🔀 Partición por sujetos
+
+- **K-fold (5)** definido en `models/folds/Kfold5.json`  
+- Cada fold usa ~18 % de los sujetos de entrenamiento como validación  
+- **Estratificación:** por etiqueta dominante de cada sujeto para asegurar balance
+
+---
+
+## ⚖️ Sampler balanceado (templado)
+
+Se usa un `WeightedRandomSampler` con pesos:
+
+\[
+w = (1 / w_s)^{0.8} \cdot (1 / w_{(s,y)})^{1.0}
+\]
+
+donde:
+- \(w_s\): número de ensayos del sujeto *s*  
+- \(w_{(s,y)}\): número de ensayos de la clase *y* dentro del sujeto *s*
+
+Esto equilibra tanto el número de sujetos como el de clases, evitando dominancia por participantes o categorías más frecuentes.
+
+---
+
+## 🏗️ Arquitectura: CNN + Transformer
+
+### CNN (bloque temporal)
+
+La **CNN** extrae patrones locales de la señal temporal (oscilaciones, desincronizaciones o transientes) y los combina jerárquicamente.
+
+| Capa | Tipo | Propósito | Salida (T=960) |
+|:--|:--|:--|:--|
+| 1 | Conv 1D (8→32, k=129, stride=2) + GN + ELU + Drop 0.2 | Detecta patrones largos (~0.8 s) | (B, 32, 480) |
+| 2 | Depthwise Sep Conv (32→64, k=31, stride=2) | Refina patrones / mezcla espacial | (B, 64, 240) |
+| 3 | Depthwise Sep Conv (64→128, k=15, stride=2) | Captura interacciones amplias | (B, 128, 120) |
+
+**Características clave:**  
+- **Depthwise separable convolutions:** separan “qué patrón por canal” de “cómo combinar canales”.  
+- **GroupNorm:** estabilidad con batches pequeños.  
+- **ELU:** activación suave sin saturación.  
+- **Dropout:** regularización temporal y espacial.  
+
+La CNN produce una secuencia comprimida (B, 128, ≈120) que resume la dinámica temporal.
+
+---
+
+### Transformer (bloque global)
+
+El **Transformer Encoder** aprende dependencias globales entre las características producidas por la CNN.  
+Cada posición “observa” todas las demás mediante **auto-atención**.
+
+$$
+\mathrm{Attention}(Q,K,V)=\mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V
+$$
+
+- **Q (Query):** qué busca  
+- **K (Key):** dónde buscar  
+- **V (Value):** información aportada
+
+Así, cada instante combina información de otros momentos relevantes, capturando **relaciones a larga distancia** (p. ej., desincronización temprana y rebote tardío).
+
+**Estructura del Transformer:**
+- Proyección conv 1×1 (128→128)  
+- Positional encoding (senos/cosenos fijos)  
+- Token [CLS] entrenable que resume la secuencia  
+- Encoder: 2 capas, 4 cabezas de atención, GELU, dropout 0.1  
+- Head final: LayerNorm → Linear → 4 clases
+
+**Qué aprende:**
+- Dependencias temporales no locales  
+- Relaciones entre fases del ensayo  
+- Evidencias dispersas → representación global
+
+---
+
+## 🔗 Sinergia CNN + Transformer
+
+| Componente | Aporta | Ejemplo EEG |
+|:--|:--|:--|
+| **CNN** | Patrones locales robustos, filtrado y reducción temporal | Ritmos μ, β, transientes |
+| **Transformer** | Relaciones globales, sincronías, dependencias largas | Conexión entre desincronización y rebote |
+| **Combinados** | Robustez + contexto global | Decisión estable por ensayo |
+
+---
+
+## 🎯 Pérdida y optimización
+
+- **Focal Loss (γ = 1.5):** enfatiza ejemplos difíciles  
+- **α por clase:** inversa de frecuencia con boosts  
+  - both fists × 1.25  
+  - both feet × 1.05  
+- **Optimizador:** AdamW (lr = 1e-3, weight_decay = 1e-2)  
+- **Scheduler:** Warmup (8 épocas) + Cosine decay (0.1×lr mínimo)  
+- **EMA:** promedio exponencial de pesos (decay = 0.9995)
+
+---
+
+## 🌈 Augmentaciones
+
+| Tipo | Parámetros globales | Propósito |
+|:--|:--|:--|
+| **Jitter temporal** | ±3 % T (~±180 ms) | Robustez a desalineación del onset |
+| **Ruido gaussiano** | σ = 0.03 | Simula ruido fisiológico/electrónico |
+| **Channel dropout** | 1 canal (p = 0.15) | Robustez ante fallos de electrodos |
+
+En **fine-tuning**, se suavizan: jitter 2 %, σ 0.02, p 0.10.
+
+---
+
+## 🔮 Inferencia (TTA / Subwindows)
+
+- **TTA:** desplaza la señal ±75 ms y promedia los logits  
+- **Subwindows:** evalúa tramos de 4.5 s cada 1.5 s → promedio  
+- **Modo combinado:** mezcla ambos promedios  
+
+→ Invarianza ante errores de tiempo y mayor estabilidad de predicción.
+
+---
+
+## 🔧 Fine-Tuning progresivo por sujeto
+
+Ajuste personalizado en dos etapas:
+
+| Etapa | Capas entrenadas | Épocas | Propósito |
+|:--|:--|:--|:--|
+| 1 | Solo head | 8 | Calibrar salida sin alterar features |
+| 2 | Todo modelo (unfreeze) | 8 | Adaptar representación al sujeto |
+
+**CV interna:** 4 folds  
+**Optimizador FT:** AdamW (backbone lr 2e-4, head lr 1e-3)  
+**Pérdida:** Focal Loss re-estimada por sujeto (con boosts)  
+**Augmentaciones:** suaves  
+
+---
+
+## 📊 Métricas y resultados
+
+- Early stopping por F1 macro (validación de sujetos)  
+- Curvas: `training_curve_foldX.png`  
+- Matrices: `confusion_global_foldX.png`, `confusion_ft_foldX.png`  
+- Resumen: Accuracy global, F1 macro, FT accuracy y Δ (FT − Global)
+
+---
+
+## ⚙️ Diagnóstico y ajuste rápido
+
+| Problema | Posible causa | Ajuste sugerido |
+|:--|:--|:--|
+| **F1 inestable** | LR alto / warmup corto | Bajar LR (7e-4 – 1e-3), subir warmup (10–12) |
+| **Underfit** | Augment fuerte / modelo pequeño | Reducir ruido/jitter, aumentar d_model a 160–192 |
+| **Overfit** | Regularización débil | Aumentar dropout (0.25–0.4), WD 2e-2, γ 1.7–2.0 |
+| **Recall bajo clase 2/3** | Desbalance residual | Subir α[2]/α[3], boost FT, ajustar sampler (b > 1.0) |
+| **FT no mejora** | Ajuste agresivo | Reducir augment FT, usar solo etapa 1, bajar lr head |
+
+---
+
+## 🧩 Flujo de datos
+
+EEG (B, 8, T = 960)  
+→ Conv1d 8→32 (k129, s2) → GN → ELU → Drop  
+→ SepConv 32→64 (k31, s2)  
+→ SepConv 64→128 (k15, s2)  
+→ Conv 1×1 128→128 → Drop  
+→ Transpose (B, L ≈ 120, D = 128)  
+→ + PosEnc → concat CLS  
+→ Transformer Encoder × 2  
+→ CLS → LayerNorm → Linear → logits (4)
+
+---
+
+## 🧠 Cómo funciona el CNN y el Transformer
+
+### CNN — Extracción local de patrones
+
+La CNN aprende filtros que responden a **patrones temporales específicos** (oscilaciones, desincronizaciones, transientes).  
+Las convoluciones con *stride* reducen resolución temporal y amplían el contexto.  
+Las **depthwise separable convolutions** separan la detección temporal (por canal) de la mezcla espacial, generando mapas de activación compactos y expresivos.
+
+### Transformer — Aprendizaje global de dependencias
+
+El Transformer usa **auto-atención** para que cada instante observe todos los demás, asignando pesos según relevancia.  
+Así capta **relaciones de largo alcance** sin necesidad de más capas convolucionales.  
+El token [CLS] sintetiza toda la secuencia en un vector representativo.  
+Cada cabeza de atención analiza las relaciones en un subespacio distinto.
+
+### Sinergia
+
+- **CNN:** aprende *qué* patrones existen  
+- **Transformer:** aprende *cómo* se combinan en el tiempo  
+- **Combinación:** robustez al ruido + comprensión de contextos largos y complejos
