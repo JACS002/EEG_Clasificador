@@ -1,1 +1,0 @@
-[01:19:51] INFO: Folds cargadas: 5 folds | sujetos: 103

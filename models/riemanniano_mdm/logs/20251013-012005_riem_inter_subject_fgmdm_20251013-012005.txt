@@ -1,4 +1,0 @@
-[01:20:05] INFO: Folds cargadas: 5 folds | sujetos: 103
-[01:34:02] INFO: CSV → /root/Proyecto/EEG_Clasificador/models/riemanniano_mdm/tables/20251013-012005_riem_inter_fgmdm_calib.csv
-[01:34:02] INFO: TXT → /root/Proyecto/EEG_Clasificador/models/riemanniano_mdm/logs/20251013-012005_riem_inter_fgmdm_calib.txt
-[01:34:02] INFO: Matriz GLOBAL → /root/Proyecto/EEG_Clasificador/models/riemanniano_mdm/figures/riem_inter_subject_global_confusion_fgmdm_20251013-012005.png

@@ -1,0 +1,63 @@
+INTER-SUBJECT CV — Classification reports por fold (TEST)
+Generado: 2025-10-30 02:06:28
+
+[Fold 1] Classification report (TEST)
+              precision    recall  f1-score   support
+
+   Both Feet     0.3654    0.2819    0.3183       337
+  Both Fists     0.2840    0.2918    0.2879       329
+        Left     0.2935    0.2774    0.2853       328
+       Right     0.3122    0.3951    0.3488       324
+
+    accuracy                         0.3111      1318
+   macro avg     0.3138    0.3115    0.3100      1318
+weighted avg     0.3141    0.3111    0.3100      1318
+--------------------------------------------------------------------------------
+[Fold 2] Classification report (TEST)
+              precision    recall  f1-score   support
+
+   Both Feet     0.3808    0.4441    0.4101       349
+  Both Fists     0.3174    0.2751    0.2948       338
+        Left     0.3714    0.4194    0.3939       341
+       Right     0.4042    0.3372    0.3677       344
+
+    accuracy                         0.3695      1372
+   macro avg     0.3685    0.3690    0.3666      1372
+weighted avg     0.3687    0.3695    0.3670      1372
+--------------------------------------------------------------------------------
+[Fold 3] Classification report (TEST)
+              precision    recall  f1-score   support
+
+   Both Feet     0.4006    0.4145    0.4074       345
+  Both Fists     0.3152    0.3014    0.3081       345
+        Left     0.3567    0.3476    0.3521       351
+       Right     0.3722    0.3853    0.3786       340
+
+    accuracy                         0.3621      1381
+   macro avg     0.3611    0.3622    0.3616      1381
+weighted avg     0.3611    0.3621    0.3615      1381
+--------------------------------------------------------------------------------
+[Fold 4] Classification report (TEST)
+              precision    recall  f1-score   support
+
+   Both Feet     0.5070    0.3273    0.3978       333
+  Both Fists     0.3073    0.3274    0.3170       336
+        Left     0.3656    0.4036    0.3836       337
+       Right     0.3495    0.4139    0.3790       331
+
+    accuracy                         0.3680      1337
+   macro avg     0.3823    0.3680    0.3694      1337
+weighted avg     0.3822    0.3680    0.3693      1337
+--------------------------------------------------------------------------------
+[Fold 5] Classification report (TEST)
+              precision    recall  f1-score   support
+
+   Both Feet     0.4667    0.5333    0.4978       315
+  Both Fists     0.3933    0.2181    0.2806       321
+        Left     0.4044    0.3427    0.3710       321
+       Right     0.3945    0.5745    0.4678       322
+
+    accuracy                         0.4167      1279
+   macro avg     0.4147    0.4172    0.4043      1279
+weighted avg     0.4144    0.4167    0.4039      1279
+--------------------------------------------------------------------------------
