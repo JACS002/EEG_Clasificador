@@ -1,0 +1,16 @@
+{
+  "params_total": 460130,
+  "params_trainable": 460130,
+  "flops_est": 58823424,
+  "latency_s": 0.002835426330566406,
+  "L": 121,
+  "d": 128,
+  "n_heads": 4,
+  "n_layers": 3,
+  "run_tag": "nb2_h4_optimized_medio",
+  "fold": 5,
+  "val_best_acc": 0.7777777777777778,
+  "val_best_f1": 0.7777777777777778,
+  "tr_at_best_acc": 0.8974089635854342,
+  "tr_at_best_f1": 0.8972056997715281
+}

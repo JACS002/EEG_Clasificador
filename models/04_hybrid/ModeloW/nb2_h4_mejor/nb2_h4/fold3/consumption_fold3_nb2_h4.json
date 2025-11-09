@@ -1,0 +1,12 @@
+{
+  "params_total": 399762,
+  "params_trainable": 399762,
+  "flops_est": 48578112,
+  "latency_s": 0.001745915412902832,
+  "L": 121,
+  "d": 144,
+  "n_heads": 4,
+  "n_layers": 2,
+  "run_tag": "nb2_h4",
+  "fold": 3
+}

@@ -1,0 +1,16 @@
+{
+  "params_total": 195170,
+  "params_trainable": 195170,
+  "flops_est": 19607808,
+  "latency_s": 0.0013323688507080077,
+  "L": 121,
+  "d": 128,
+  "n_heads": 4,
+  "n_layers": 1,
+  "run_tag": "nb2_h4_optimized_ligero",
+  "fold": 2,
+  "val_best_acc": 0.7873015873015873,
+  "val_best_f1": 0.7872994436829799,
+  "tr_at_best_acc": 0.8585643212508884,
+  "tr_at_best_f1": 0.8578888866331005
+}

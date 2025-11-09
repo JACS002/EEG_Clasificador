@@ -453,220 +453,338 @@ raw EDF ─► selección de 8 canales
                                     └► Fine-tuning por sujeto (L2SP)
 ```
 
+---
 
-# 🧠 CNN+Transformer para MI-EEG (4 clases, 8 canales)
+# 🧠 Arquitectura CNN + Transformer para EEG Motor Imagery
 
-Con sampler balanceado, Focal Loss, Warmup+Cosine, EMA, TTA y Fine-Tuning Progresivo.
-
-Este modelo combina **CNNs** (para aprender patrones locales) y **Transformers** (para dependencias globales) en la clasificación de señales EEG de imaginación motora. Usa 8 canales seleccionados y una ventana de 6 s, con técnicas modernas de regularización y calibración por sujeto.
+Este documento describe detalladamente la arquitectura híbrida **CNN + Transformer** usada para clasificar señales EEG (motor imagery), los **hiperparámetros**, la **estrategia de entrenamiento**, y técnicas como **EMA**, **warmup scheduler** y **fine-tuning por sujeto**.
 
 ---
 
-## 📦 Datos y preprocesamiento
+## ⚙️ 1. Flujo general del pipeline
 
-- **Ventana temporal:** [-1, 5] s (6 s totales)  
-- **Canales usados (8):** C3, C4, Cz, CP3, CP4, FC3, FC4, FCz  
-- **Runs utilizados:**
-  - R04, R08, R12 → T1/T2 = left/right  
-  - R06, R10, R14 → T1/T2 = both fists/both feet
-
-**Preprocesamiento configurable:**
-- Filtro notch 60 Hz (`DO_NOTCH=True`)  
-- Band-pass opcional 4–38 Hz (`DO_BANDPASS=False`)  
-- Referencia promedio (CAR) opcional  
-- Resample opcional (`RESAMPLE_HZ=None`)  
-- `ZSCORE_PER_EPOCH=False` → usa estandarización por canal  
-- **Normalización:** por canal (fit en train, aplicado a val/test)
-
----
-
-## 🔀 Partición por sujetos
-
-- **K-fold (5)** definido en `models/folds/Kfold5.json`  
-- Cada fold usa ~18 % de los sujetos de entrenamiento como validación  
-- **Estratificación:** por etiqueta dominante de cada sujeto para asegurar balance
+```text
+EEG EDF Files
+   │
+   ├── Preprocesamiento (notch, filtro, zscore)
+   │
+   ├── División por sujetos (train / val / test)
+   │
+   ├── CNN temporal → Extracción de patrones locales
+   │
+   ├── Proyección → tokens (d_model)
+   │
+   ├── Transformer Encoder → atención temporal
+   │
+   ├── Token CLS → Head lineal
+   │
+   ├── Entrenamiento con Focal Loss + Warmup + EMA
+   │
+   └── Fine-tuning por sujeto (4-fold CV)
+```
 
 ---
 
-## ⚖️ Sampler balanceado (templado)
+## 🧱 2. Arquitectura de la CNN
 
-Se usa un `WeightedRandomSampler` con pesos:
+La parte convolucional del modelo extrae **patrones espacio-temporales** del EEG.  
 
-\[
-w = (1 / w_s)^{0.8} \cdot (1 / w_{(s,y)})^{1.0}
-\]
+### Flujo de capas
+```mermaid
+graph TD
+    A[EEG 8xT] --> B[Conv1D 8→32, k=129, s=2]
+    B --> C[DepthwiseSepConv 32→64]
+    C --> D[DepthwiseSepConv 64→128]
+    D --> E[Conv1D 128→d_model (1x1)]
+    E --> F[Feature Map (d_model x T′)]
+```
 
-donde:
-- \(w_s\): número de ensayos del sujeto *s*  
-- \(w_{(s,y)}\): número de ensayos de la clase *y* dentro del sujeto *s*
+### Detalles
+| Capa | Descripción |
+|:--|:--|
+| **Conv1D 8→32** | Captura patrones largos (~1 s). Reduce T a la mitad (stride=2). |
+| **Depthwise Separable Conv** | Divide la convolución en “por canal” y “mezcla de canales” para reducir parámetros. |
+| **GroupNorm + ELU** | Normaliza por grupos y usa activación ELU para estabilidad. |
+| **Dropout (p_drop)** | Evita sobreajuste. |
+| **Conv1D 1×1 → d_model** | Proyecta las features al espacio de embedding del Transformer. |
 
-Esto equilibra tanto el número de sujetos como el de clases, evitando dominancia por participantes o categorías más frecuentes.
-
----
-
-## 🏗️ Arquitectura: CNN + Transformer
-
-### CNN (bloque temporal)
-
-La **CNN** extrae patrones locales de la señal temporal (oscilaciones, desincronizaciones o transientes) y los combina jerárquicamente.
-
-| Capa | Tipo | Propósito | Salida (T=960) |
-|:--|:--|:--|:--|
-| 1 | Conv 1D (8→32, k=129, stride=2) + GN + ELU + Drop 0.2 | Detecta patrones largos (~0.8 s) | (B, 32, 480) |
-| 2 | Depthwise Sep Conv (32→64, k=31, stride=2) | Refina patrones / mezcla espacial | (B, 64, 240) |
-| 3 | Depthwise Sep Conv (64→128, k=15, stride=2) | Captura interacciones amplias | (B, 128, 120) |
-
-**Características clave:**  
-- **Depthwise separable convolutions:** separan “qué patrón por canal” de “cómo combinar canales”.  
-- **GroupNorm:** estabilidad con batches pequeños.  
-- **ELU:** activación suave sin saturación.  
-- **Dropout:** regularización temporal y espacial.  
-
-La CNN produce una secuencia comprimida (B, 128, ≈120) que resume la dinámica temporal.
+El número de filtros crece (32→64→128) para permitir que capas más profundas aprendan representaciones más abstractas y ricas.  
+Mientras tanto, la longitud temporal `T` se reduce con strides (`T′ ≈ T / 8`).
 
 ---
 
-### Transformer (bloque global)
+## 🔺 3. Arquitectura del Transformer Encoder
 
-El **Transformer Encoder** aprende dependencias globales entre las características producidas por la CNN.  
-Cada posición “observa” todas las demás mediante **auto-atención**.
+El Transformer modela dependencias **de largo alcance** en el tiempo entre los tokens de EEG.
 
-$$
-\mathrm{Attention}(Q,K,V)=\mathrm{softmax}\!\left(\frac{QK^{\top}}{\sqrt{d_k}}\right)V
-$$
+### Flujo de procesamiento
+```mermaid
+graph TD
+    A[Feature Map + PosEnc] --> B[Add CLS Token]
+    B --> C[Multi-Head Self-Attention]
+    C --> D[Add & Norm]
+    D --> E[Feedforward Network 2×d_model]
+    E --> F[Add & Norm]
+    F --> G[Repeat N_LAYERS]
+    G --> H[CLS → Linear Head → Probabilidades]
+```
 
-- **Q (Query):** qué busca  
-- **K (Key):** dónde buscar  
-- **V (Value):** información aportada
-
-Así, cada instante combina información de otros momentos relevantes, capturando **relaciones a larga distancia** (p. ej., desincronización temprana y rebote tardío).
-
-**Estructura del Transformer:**
-- Proyección conv 1×1 (128→128)  
-- Positional encoding (senos/cosenos fijos)  
-- Token [CLS] entrenable que resume la secuencia  
-- Encoder: 2 capas, 4 cabezas de atención, GELU, dropout 0.1  
-- Head final: LayerNorm → Linear → 4 clases
-
-**Qué aprende:**
-- Dependencias temporales no locales  
-- Relaciones entre fases del ensayo  
-- Evidencias dispersas → representación global
+### Módulos internos
+| Componente | Descripción |
+|:--|:--|
+| **Positional Encoding** | Suma señales sinusoidales para indicar posición temporal. |
+| **Token [CLS]** | Representación global que resume toda la secuencia. |
+| **Multi-Head Attention (MHA)** | Cada cabeza aprende relaciones distintas entre tiempos. |
+| **Feedforward Network (FFN)** | Dos capas lineales (2×d_model) con GELU y Dropout. |
+| **LayerNorm + Residuals** | Aumenta estabilidad y flujo del gradiente. |
+| **N_LAYERS** | Controla cuántas veces se repite el bloque completo. |
 
 ---
 
-## 🔗 Sinergia CNN + Transformer
+## ⚙️ 4. Hiperparámetros explicados
 
-| Componente | Aporta | Ejemplo EEG |
+### 🧩 Entrenamiento
+| Parámetro | Descripción |
+|:--|:--|
+| `EPOCHS` | Épocas máximas de entrenamiento. |
+| `BATCH_SIZE` | Cuántas muestras se procesan por iteración. |
+| `BASE_LR` | Tasa de aprendizaje inicial. |
+| `WARMUP_EPOCHS` | Épocas donde el LR aumenta gradualmente (warmup). |
+| `PATIENCE` | Número de épocas sin mejora antes de detener. |
+
+### ⚡ Preprocesamiento EEG
+| Parámetro | Función |
+|:--|:--|
+| `DO_NOTCH` | Aplica filtro notch (60 Hz). |
+| `DO_BANDPASS`, `BP_LO`, `BP_HI` | Filtro pasa banda entre 4–38 Hz (motor imagery). |
+| `DO_CAR` | Referencia común. |
+| `ZSCORE_PER_EPOCH` | Normaliza cada época individualmente. |
+| `RESAMPLE_HZ` | Nueva frecuencia de muestreo (si se usa). |
+
+### 🧠 Modelo CNN + Transformer
+| Parámetro | Significado |
+|:--|:--|
+| `D_MODEL` | Dimensión interna de embeddings. |
+| `N_HEADS` | Número de cabezas en MHA. |
+| `N_LAYERS` | Capas Transformer Encoder. |
+| `P_DROP` | Dropout en capas CNN. |
+| `P_DROP_ENCODER` | Dropout dentro del Transformer. |
+
+### 🔁 Entrenamiento avanzado
+| Parámetro | Función |
+|:--|:--|
+| `USE_EMA` | Usa Exponential Moving Average de pesos. |
+| `EMA_DECAY` | Factor de suavizado (0.9995). |
+| `USE_WEIGHTED_SAMPLER` | Balancea sujetos y clases. |
+
+### 🧬 Fine-Tuning (por sujeto)
+| Parámetro | Explicación |
+|:--|:--|
+| `FT_N_FOLDS` | Cross-validation interna por sujeto. |
+| `FT_FREEZE_EPOCHS` | Épocas congelando backbone. |
+| `FT_UNFREEZE_EPOCHS` | Épocas entrenando todo. |
+| `FT_LR_HEAD` | LR para la capa de salida. |
+| `FT_LR_BACKBONE` | LR para el backbone (menor). |
+| `FT_PATIENCE` | Early stopping en FT. |
+| `FT_WD` | Weight decay. |
+| `FT_AUG` | Probabilidades de augmentación. |
+
+---
+
+## 🧮 5. Conceptos clave
+
+| Concepto | Significado |
+|:--|:--|
+| **Batch size** | Número de ejemplos procesados por actualización. |
+| **d_model** | Tamaño del vector de embedding (dimensión del token). |
+| **T′** | Longitud temporal reducida tras convoluciones (por stride). |
+| **Warmup scheduler** | Aumenta el LR suavemente al inicio y lo reduce con coseno al final. |
+| **EMA** | Mantiene una versión suavizada de los pesos para evaluación estable. |
+| **Fine-tuning** | Adapta el modelo global a cada sujeto con aprendizaje incremental. |
+
+---
+
+## 🔥 6. Estrategias de entrenamiento
+
+### 🧩 Warmup + Cosine Scheduler
+Durante las primeras `WARMUP_EPOCHS`, el LR aumenta gradualmente desde un valor pequeño hasta el `BASE_LR`.  
+Después, decrece siguiendo una curva coseno hasta llegar a un mínimo (10 % del valor base).
+
+**Ventajas:**
+- Evita inestabilidad al inicio.  
+- Permite convergencia más suave.  
+- Refina los últimos pasos con actualizaciones pequeñas.
+
+**Visualización:**
+```
+LR
+│        /\
+│       /  \
+│      /    \______
+│_____/            Época
+    ↑ warmup     ↑ decay
+```
+
+---
+
+### ⚙️ Exponential Moving Average (EMA)
+EMA mantiene una copia “promediada” de los pesos que evoluciona lentamente:
+
+```
+θ_ema ← decay * θ_ema + (1 - decay) * θ_model
+```
+
+**Ventajas:**
+- Reduce el ruido en los pesos.  
+- Mejora la estabilidad y generalización.  
+- Se usa el modelo EMA para evaluación.
+
+---
+
+### 🧠 Fine-Tuning progresivo
+Después del entrenamiento global (multi-sujeto), cada sujeto pasa por un ajuste personalizado:
+
+1. **Congelar backbone:** se entrena solo la cabeza (aprende rápido sin olvidar).  
+2. **Descongelar todo:** se entrena el modelo completo con LR bajo.  
+3. **4-Fold CV:** cada sujeto se valida en 4 divisiones internas.
+
+**Beneficios:**
+- El modelo se adapta a las variaciones individuales del EEG.  
+- Evita sobreajuste manteniendo conocimiento general.
+
+---
+
+## 📊 7. Resumen estructural
+
+| Bloque | Función | Output |
 |:--|:--|:--|
-| **CNN** | Patrones locales robustos, filtrado y reducción temporal | Ritmos μ, β, transientes |
-| **Transformer** | Relaciones globales, sincronías, dependencias largas | Conexión entre desincronización y rebote |
-| **Combinados** | Robustez + contexto global | Decisión estable por ensayo |
+| CNN | Extrae patrones locales del EEG. | (B, C′, T′) |
+| Proyección 1×1 | Convierte a espacio de embedding. | (B, d_model, T′) |
+| Transformer Encoder | Modela dependencias temporales largas. | (B, L, D) |
+| Token [CLS] + Head | Predicción binaria (izq./der.). | (B, 2) |
 
 ---
 
-## 🎯 Pérdida y optimización
+## 🧾 8. Resumen final de conceptos
 
-- **Focal Loss (γ = 1.5):** enfatiza ejemplos difíciles  
-- **α por clase:** inversa de frecuencia con boosts  
-  - both fists × 1.25  
-  - both feet × 1.05  
-- **Optimizador:** AdamW (lr = 1e-3, weight_decay = 1e-2)  
-- **Scheduler:** Warmup (8 épocas) + Cosine decay (0.1×lr mínimo)  
-- **EMA:** promedio exponencial de pesos (decay = 0.9995)
+- La **CNN** actúa como extractor jerárquico local.  
+- El **Transformer** modela relaciones temporales globales.  
+- El **warmup scheduler** suaviza el aprendizaje.  
+- El **EMA** estabiliza los pesos.  
+- El **fine-tuning** personaliza por sujeto.  
 
----
-
-## 🌈 Augmentaciones
-
-| Tipo | Parámetros globales | Propósito |
-|:--|:--|:--|
-| **Jitter temporal** | ±3 % T (~±180 ms) | Robustez a desalineación del onset |
-| **Ruido gaussiano** | σ = 0.03 | Simula ruido fisiológico/electrónico |
-| **Channel dropout** | 1 canal (p = 0.15) | Robustez ante fallos de electrodos |
-
-En **fine-tuning**, se suavizan: jitter 2 %, σ 0.02, p 0.10.
+Con este pipeline, el modelo logra una **alta robustez y generalización inter-sujeto**, adaptándose luego individualmente.
 
 ---
 
-## 🔮 Inferencia (TTA / Subwindows)
-
-- **TTA:** desplaza la señal ±75 ms y promedia los logits  
-- **Subwindows:** evalúa tramos de 4.5 s cada 1.5 s → promedio  
-- **Modo combinado:** mezcla ambos promedios  
-
-→ Invarianza ante errores de tiempo y mayor estabilidad de predicción.
 
 ---
 
-## 🔧 Fine-Tuning progresivo por sujeto
+## ⚙️ Entrenamiento
 
-Ajuste personalizado en dos etapas:
-
-| Etapa | Capas entrenadas | Épocas | Propósito |
-|:--|:--|:--|:--|
-| 1 | Solo head | 8 | Calibrar salida sin alterar features |
-| 2 | Todo modelo (unfreeze) | 8 | Adaptar representación al sujeto |
-
-**CV interna:** 4 folds  
-**Optimizador FT:** AdamW (backbone lr 2e-4, head lr 1e-3)  
-**Pérdida:** Focal Loss re-estimada por sujeto (con boosts)  
-**Augmentaciones:** suaves  
+- **Optimización:** AdamW (lr=1e-3), scheduler Warmup + Cosine decay.
+- **Pérdida:** Focal Loss (γ=1.5, α balanceado).
+- **Regularización:** Dropout, EMA (decay=0.9995), Early stopping.
+- **Aumentaciones:** jitter temporal, ruido aditivo, channel dropout.
+- **Weighted Sampler:** balanceo por clase y sujeto.
+- **Cross-validation:** 5 folds por sujeto (train/val/test).
 
 ---
 
-## 📊 Métricas y resultados
+## 🧮 Robustez con Pocas Muestras
 
-- Early stopping por F1 macro (validación de sujetos)  
-- Curvas: `training_curve_foldX.png`  
-- Matrices: `confusion_global_foldX.png`, `confusion_ft_foldX.png`  
-- Resumen: Accuracy global, F1 macro, FT accuracy y Δ (FT − Global)
+El modelo logra buen desempeño a pesar del número reducido de épocas (~45 por sujeto) gracias a:
 
----
-
-## ⚙️ Diagnóstico y ajuste rápido
-
-| Problema | Posible causa | Ajuste sugerido |
-|:--|:--|:--|
-| **F1 inestable** | LR alto / warmup corto | Bajar LR (7e-4 – 1e-3), subir warmup (10–12) |
-| **Underfit** | Augment fuerte / modelo pequeño | Reducir ruido/jitter, aumentar d_model a 160–192 |
-| **Overfit** | Regularización débil | Aumentar dropout (0.25–0.4), WD 2e-2, γ 1.7–2.0 |
-| **Recall bajo clase 2/3** | Desbalance residual | Subir α[2]/α[3], boost FT, ajustar sampler (b > 1.0) |
-| **FT no mejora** | Ajuste agresivo | Reducir augment FT, usar solo etapa 1, bajar lr head |
+1. **Extracción jerárquica (CNN):** aprende patrones reutilizables entre sujetos.
+2. **Eficiencia paramétrica:** depthwise separable convs reducen la cantidad de pesos entrenables.
+3. **Regularización y data augmentation.**
+4. **Atención global:** el Transformer aprende relaciones invariantes al sujeto.
+5. **Fine-tuning individual:** refina el modelo global con datos de cada sujeto.
 
 ---
 
-## 🧩 Flujo de datos
+## 🔍 Interpretabilidad
 
-EEG (B, 8, T = 960)  
-→ Conv1d 8→32 (k129, s2) → GN → ELU → Drop  
-→ SepConv 32→64 (k31, s2)  
-→ SepConv 64→128 (k15, s2)  
-→ Conv 1×1 128→128 → Drop  
-→ Transpose (B, L ≈ 120, D = 128)  
-→ + PosEnc → concat CLS  
-→ Transformer Encoder × 2  
-→ CLS → LayerNorm → Linear → logits (4)
+- **Attention Maps:** muestran qué regiones temporales fueron más relevantes.
+- **Grad-CAM++ 1D:** identifica segmentos EEG que influyeron en la decisión.
+- **Visualizaciones por sujeto:** se generan automáticamente en test (solo aciertos).
 
 ---
 
-## 🧠 Cómo funciona el CNN y el Transformer
+## 📊 Métricas
 
-### CNN — Extracción local de patrones
+- Accuracy global por fold.
+- F1 Macro (balance entre clases).
+- Matrices de confusión.
+- Especificidad y sensibilidad promedio.
 
-La CNN aprende filtros que responden a **patrones temporales específicos** (oscilaciones, desincronizaciones, transientes).  
-Las convoluciones con *stride* reducen resolución temporal y amplían el contexto.  
-Las **depthwise separable convolutions** separan la detección temporal (por canal) de la mezcla espacial, generando mapas de activación compactos y expresivos.
 
-### Transformer — Aprendizaje global de dependencias
 
-El Transformer usa **auto-atención** para que cada instante observe todos los demás, asignando pesos según relevancia.  
-Así capta **relaciones de largo alcance** sin necesidad de más capas convolucionales.  
-El token [CLS] sintetiza toda la secuencia en un vector representativo.  
-Cada cabeza de atención analiza las relaciones en un subespacio distinto.
+---
 
-### Sinergia
 
-- **CNN:** aprende *qué* patrones existen  
-- **Transformer:** aprende *cómo* se combinan en el tiempo  
-- **Combinación:** robustez al ruido + comprensión de contextos largos y complejos
+# 🧠 Comparación de Modelos CNN+Transformer — EEG PhysioNet
+
+---
+
+## ⚙️ Modelos evaluados
+
+| Modelo | Configuración | Capas Transformer | Parámetros | FLOPs | Enfoque |
+|:--|:--|--:|--:|--:|:--|
+| `nb2_h4_optimized_ligero` | d=128, L=1 | 1 | 195 k | 19.6 M | Modelo eficiente (low-power) |
+| `nb2_h4_optimized_medio` | d=128, L=3 | 3 | 460 k | 58.8 M | Modelo balanceado (mejor F1) |
+| `nb2_h4` | d=144, L=2 | 2 | 400 k | 48.6 M | Modelo base (referencia) |
+
+---
+
+## 📊 Resultados globales
+
+| Modelo | ACC (mean) | F1_macro (mean) | FT_ACC (mean) | FLOPs | Latencia | Parámetros |
+|:--|--:|--:|--:|--:|--:|--:|
+| **nb2_h4_optimized_medio** | **0.8305 ± 0.0188** | **0.8298 ± 0.0188** | 0.8623 ± 0.0154 | 58.8 M | 2.81 ms | 460k |
+| **nb2_h4_optimized_ligero** | 0.8211 ± 0.0167 | 0.8211 ± 0.0167 | **0.8731 ± 0.0133** | **19.6 M** | **1.31 ms** | **195k** |
+| **nb2_h4 (base)** | 0.8203 ± 0.0112 | 0.8203 ± 0.0112 | 0.8596 ± 0.014 | 48.6 M | 1.76 ms | 400k |
+
+---
+
+## 🧩 Análisis de rendimiento
+
+### 🥇 `nb2_h4_optimized_medio`
+- Máximo F1 (≈0.83).  
+- 3 capas Transformer → mejor estabilidad inter-fold.  
+- Costo computacional medio-alto (≈58M FLOPs).
+
+### 🥈 `nb2_h4_optimized_ligero`
+- F1 ≈ 0.82, con solo 1 capa Transformer.  
+- 3× más rápido que el medio.  
+- Ideal para tiempo real o dispositivos embebidos.
+
+### 🥉 `nb2_h4` (base)
+- F1 ≈ 0.82, sin mejora clara frente al ligero.  
+- FLOPs intermedios (48M), sin ganancia significativa.
+
+---
+
+## ⚖️ Trade-off general
+
+| Modelo | F1_macro | FLOPs | Latencia | F1 / Costo (relativo) | Recomendación |
+|:--|--:|--:|--:|--:|:--|
+| 🥇 `nb2_h4_optimized_medio` | **0.8298** | 58.8 M | 2.8 ms | 1.0× | Mejor F1 absoluto |
+| 🥈 `nb2_h4_optimized_ligero` | 0.8211 | **19.6 M** | **1.3 ms** | **2.5× más eficiente** | Mejor costo-beneficio |
+| 🥉 `nb2_h4` (base) | 0.8203 | 48.6 M | 1.76 ms | 1.5× | Equilibrado, sin ganancia clara |
+
+---
+
+## 💡 Conclusiones
+
+- **Ganancia F1:** El modelo medio supera al ligero solo +1 %, pero triplica su costo computacional.  
+- **Robustez:** Los tres modelos muestran varianza baja → pipeline estable y reproducible.  
+- **Fine-Tuning:** mejora promedio de 4–5 % adicional en accuracy por sujeto.  
+- **Uso recomendado:**  
+  - **Entrenamiento offline / máxima precisión:** `nb2_h4_optimized_medio`.  
+  - **Despliegue en tiempo real / eficiencia:** `nb2_h4_optimized_ligero`.
+
+---
+
+
+
