@@ -492,11 +492,11 @@ La parte convolucional del modelo extrae **patrones espacio-temporales** del EEG
 ### Flujo de capas
 ```mermaid
 graph TD
-    A[EEG 8xT] --> B[Conv1D 8→32, k=129, s=2]
-    B --> C[DepthwiseSepConv 32→64]
-    C --> D[DepthwiseSepConv 64→128]
-    D --> E[Conv1D 128→d_model (1x1)]
-    E --> F[Feature Map (d_model x T′)]
+    A["EEG 8xT"] --> B["Conv1D 8->32, k=129, s=2"]
+    B --> C["DepthwiseSepConv 32->64"]
+    C --> D["DepthwiseSepConv 64->128"]
+    D --> E["Conv1D 128->d_model (1x1)"]
+    E --> F["Feature Map (d_model x T')"]
 ```
 
 ### Detalles
@@ -520,13 +520,13 @@ El Transformer modela dependencias **de largo alcance** en el tiempo entre los t
 ### Flujo de procesamiento
 ```mermaid
 graph TD
-    A[Feature Map + PosEnc] --> B[Add CLS Token]
-    B --> C[Multi-Head Self-Attention]
-    C --> D[Add & Norm]
-    D --> E[Feedforward Network 2×d_model]
-    E --> F[Add & Norm]
-    F --> G[Repeat N_LAYERS]
-    G --> H[CLS → Linear Head → Probabilidades]
+    A["Feature Map + PosEnc"] --> B["Add CLS Token"]
+    B --> C["Multi-Head Self-Attention"]
+    C --> D["Add & Norm"]
+    D --> E["Feedforward Network 2*d_model"]
+    E --> F["Add & Norm"]
+    F --> G["Repeat N_LAYERS"]
+    G --> H["CLS -> Linear Head -> Probabilidades"]
 ```
 
 ### Módulos internos
