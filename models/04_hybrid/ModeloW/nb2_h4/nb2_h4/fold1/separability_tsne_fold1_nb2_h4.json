@@ -1,0 +1,10 @@
+{
+  "fold": 1,
+  "run_tag": "nb2_h4",
+  "val_sil_tsne": 0.2556016147136688,
+  "val_db_tsne": 1.2597070872285168,
+  "test_sil_tsne": 0.28524625301361084,
+  "test_db_tsne": 1.1576477395768765,
+  "n_val_samples": 630,
+  "n_test_samples": 882
+}

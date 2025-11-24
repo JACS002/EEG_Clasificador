@@ -511,6 +511,26 @@ graph TD
 El número de filtros crece (32→64→128) para permitir que capas más profundas aprendan representaciones más abstractas y ricas.  
 Mientras tanto, la longitud temporal `T` se reduce con strides (`T′ ≈ T / 8`).
 
+Etapa 1: Conv1D inicial
+
+- Pasa de 8 canales a 32 filtros.
+
+- Kernel grande (k=129) ≈ 1 segundo de EEG → capta patrones temporales largos.
+
+- stride=2 reduce la longitud temporal a la mitad (T → T/2).
+
+Etapa 2: Depthwise separable convolutions
+
+- Estas son dos capas eficientes que separan el filtrado por canal y la mezcla entre canales
+
+   - Depthwise (por canal)
+
+      Cada canal se filtra por separado (grupos = canales).
+      → Detecta patrones temporales independientes por canal.
+
+   - Pointwise (1×1 conv)
+   
+      Combina la información entre canales (como una mezcla lineal).
 ---
 
 ## 🔺 3. Arquitectura del Transformer Encoder
