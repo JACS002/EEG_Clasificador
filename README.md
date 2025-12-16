@@ -1,4 +1,4 @@
-# EEG Motor Imagery Classifier - CNN+Transformer
+# Classification of Motor Imagery EEG Signals Using CNN–Transformer Hybrid Models
 ### Autor: Joel Cuascota
 
 Clasificación de señales EEG de imaginación motora (motor imagery) utilizando un modelo híbrido **CNN+Transformer** para el reconocimiento de movimientos imaginados de manos (izquierda/derecha).
@@ -163,6 +163,28 @@ RANDOM_STATE = 42
 torch.use_deterministic_algorithms(True)
 torch.backends.cudnn.deterministic = True
 ```
+
+## Citación
+
+Este proyecto es parte del trabajo de tesis para el grado de **Ingeniería en Ciencias de la Computación** en la **Universidad San Francisco de Quito**.
+
+Si utilizas este código, modelos o metodología en tu investigación, por favor cita este repositorio:
+
+```bibtex
+@misc{cuascota2025eeg_cnn_transformer,
+  author = {Cuascota, Joel},
+  title = {Classification of Motor Imagery EEG Signals Using CNN–Transformer Hybrid Models},
+  year = {2025},
+  month = {12},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/JACS002/EEG_Clasificador}},
+  note = {Trabajo de tesis, Universidad San Francisco de Quito}
+}
+```
+
+**Formato APA:**
+> Cuascota, J. (2025). *Classification of Motor Imagery EEG Signals Using CNN–Transformer Hybrid Models* [Repositorio de GitHub]. Universidad San Francisco de Quito. https://github.com/JACS002/EEG_Clasificador
 
 ## 📝 Licencia
 
