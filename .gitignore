@@ -1,7 +1,20 @@
 # Ignorar datasets pesados
 data/raw/
 data/processed/
+data/brainbit/
+data/cache
 
+logs/
+
+models/01_fbcsp_lda/
+models/02_riemanniano_mdm/
+models/03_eegnet/
+models/05_brainbit/
+
+
+notebooks/
+
+reports/
 # ignorar checkpoints grandes
 *.fif
 *.edf
