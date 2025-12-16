@@ -1,15 +1,12 @@
 # Ignorar datasets pesados
-data/raw/
-data/processed/
-data/brainbit/
-data/cache
+data/*
 
 logs/
 
-models/01_fbcsp_lda/
-models/02_riemanniano_mdm/
-models/03_eegnet/
-models/05_brainbit/
+models/*
+!models/04_hybrid/
+!models/04_hybrid/** 
+
 
 
 notebooks/
