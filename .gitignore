@@ -6,7 +6,10 @@ logs/
 models/*
 !models/04_hybrid/
 !models/04_hybrid/** 
+!models/05_brainbit/
 
+
+node_modules/
 
 
 notebooks/
